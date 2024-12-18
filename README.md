@@ -22,7 +22,7 @@ If Python cannot locate CARLA egg file correctly ("ImportError: No Module named 
 ```sh
  export PYTHONPATH=$PYTHONPATH:/home/tongyaoj/Documents/carla9.10/PythonAPI/carla/dist/carla-0.9.10-py3.7-linux-x86_64.egg
 ```
-Go to the root of the code and begin a single iteration of the occlusion simulation by running
+Go to the root of the repo and run a single iteration of the occlusion simulation with the nominal cruise control via
 ```sh
  python cruise_control.py
 ```
@@ -30,24 +30,24 @@ which will run the simulation with the default initial speed, and initial positi
 ```sh
  python cruise_control.py --init_pos=x --init_speed=v
 ```
-Single runs can save frames to generate videos as well, as seen with the additional flags below:
+Single runs can save frames to generate videos as well, with the additional flags below:
 ```sh
  python cruise_control.py --save=True
 ```
 
-To get a lookup table, set your desired range of initial position, range of initial speed, discretization steps, number of trials for each state, and run the following
+To get a lookup table for safety probability, set your desired range of initial position, range of initial speed, discretization steps, number of trials for each state, and run the following
 ```sh
  python create_risk_lookup.py
 ```
 which will save 'risk_lookup_table.csv' with four columns: initial position, initial speed, total number of safe trials, and total number of unsafe trials. There are arguments to customize the range of initial states and discretization:
-* xmin
-* xmax
-* xdelta
-* vmin
-* vmax
-* vdelta
-* time_horizon
-* N
+* xmin: left margin of inital position
+* xmax: right margin of inital position
+* xdelta: position discretization step
+* vmin: left margin of inital speed
+* vmax: right margin of inital speed
+* vdelta: speed discretization step
+* time_horizon: time horizon of the long-term safety probability
+* N: number of trials for each initial state configuration
 
 If CARLA crashes with the error message: "Disabling core dumps. Signal 11 caught", set the argument 'N' in create_risk_lookup.py smaller, adjust the number of iterations in shell file and run 
 ```sh
@@ -65,27 +65,27 @@ Launch a terminal in the root of the code and implement safe control algorithm b
 ```
 which will execute the safe controller. 
 Arguments are described as below:
-* init_pos: initial position
-* init_speed: initial speed
-* alpha: control constant
-* epsilon: risk tolerance
-* save: save frames to produce simulation birds' eye view video
-* save_brake :save velocity and control(brake or throttle command) versus time plot
-* save_pos: save position versus time plot
-* save_prob: save safety probability versus time plot
-* save_time: save simulation time in 'safe_control_time.txt'
-* save_trajectory: save velocity, position, control, and safety probability in files 'safe_velocity.txt', 'safe_position.txt', 'safe_u.txt', and 'safe_F.txt' respectively.
+* init_pos: initial position (float between [-100, 82], this range is converted to [-182, 0] in the paper to make the place of occlusion the origin)
+* init_speed: initial speed (float >= 0)
+* alpha: control constant (float > 0)
+* epsilon: risk tolerance (float between (0, 1))
+* save: save frames to produce simulation birds' eye view video (True/False)
+* save_brake :save velocity and control(brake or throttle command) versus time plot (True/False)
+* save_pos: save position versus time plot (True/False)
+* save_prob: save safety probability versus time plot (True/False)
+* save_time: save simulation time in 'safe_control_time.txt' (True/False)
+* save_trajectory: save velocity, position, control, and safety probability in files 'safe_velocity.txt', 'safe_position.txt', 'safe_u.txt', and 'safe_F.txt' respectively. (True/False)
 
 
 
 ## Visualization and Evaluation
 
-To reproduce figures in the paper, go to the visualization folder and run the corresponding code.
+To reproduce the figures in the paper, go to the visualization folder and run the corresponding code.
 For **Figure 3**, run the following which will save the plot in 'table_trajectory.pdf'. Here we smoothed out the heatmap with Gaussian filter.
 ```sh
  python plot_lookup.py
 ```
-For **Figure 4**, first run four control methods(PID, risk-based, Transfuser, proposed) to save their trajectories by
+For **Figure 4**, first run four control methods (PID, risk-based, Transfuser, proposed) to save their trajectories by
 ```sh
  python pid_control.py --init_pos=-38 --init_speed=0 --save_trajectory=True
  python risk_based_control.py --init_pos=-38 --init_speed=0 --epsilon=0.02 --save_trajectory=True
@@ -102,7 +102,7 @@ And then use the trajectory obtained to produce the velocity vs time or velocity
  python velocity_time.py
  python velocity_distance.py
 ```
-we also uploaded our experiment trajectory results(text files) in this folder.
+we also uploaded our experiment trajectory results (text files) in this folder.
 **Figure 1** and **Figure 2** source files are 'intersection_3D_figure.pptx' and 'carla_setup.pptx'.
 
 To reproduce **Table II**, set the initial states and number of trials, run
