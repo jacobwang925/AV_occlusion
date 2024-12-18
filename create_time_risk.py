@@ -91,7 +91,7 @@ def create_cruise_control(initial_state, N):
         for n in tqdm(range(N), desc="n loop", leave=False):
             overall_progress.update(1)
             # run cruise control N times
-            cmd = f"python cruise_control.py --init_pos {x} --init_speed {v} --save_time=True"
+            cmd = f"python pid_control.py --init_pos {x} --init_speed {v} --save_time=True"
             print(cmd)
             os.system(cmd)
 
@@ -132,7 +132,7 @@ def create_baseline_control(initial_state, tolerance, N):
             for n in tqdm(range(N), desc="n loop", leave=False):
                 overall_progress.update(1)
                 # run safe control N times
-                cmd = f"python baseline_control.py --init_pos {x} --init_speed {v} --epsilon {epsilon} --save_time=True"
+                cmd = f"python risk_based_control.py --init_pos {x} --init_speed {v} --epsilon {epsilon} --save_time=True"
                 print(cmd)
                 os.system(cmd)
 
@@ -169,7 +169,7 @@ def create_transfuser_control(initial_state, N):
         for n in tqdm(range(N), desc="n loop", leave=False):
             overall_progress.update(1)
             # run cruise control N times
-            cmd = f"python transfuser_test.py --init_pos {x} --init_speed {v} --save_time=True"
+            cmd = f"python transfuser_control.py --init_pos {x} --init_speed {v} --save_time=True"
             print(cmd)
             os.system(cmd)
 
