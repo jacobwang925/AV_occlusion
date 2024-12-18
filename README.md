@@ -58,7 +58,11 @@ To visualize the risk lookup table, please refer to the **visualization and eval
 
 ## Safe Control
 
-The risk lookup table we used to run the following experiments is uploaded here as 'risk_lookup_table.csv', where we preprocessed the data saved from the previous section. We calculated the safety probability of each state, and only kept the value of initial position, initial speed, safety probability without column names.
+The risk lookup table we used to run the following experiments is uploaded here as 'raw_risk_lookup_table.csv', where we preprocessed the data saved from the previous section. We calculated the safety probability of each state, and only kept the value of initial position, initial speed, safety probability without column names. Create a new folder called 'tables' and save the previous raw tables into this folder, and run
+```sh
+ python lookup_processing.py
+```
+
 Launch a terminal in the root of the code and implement safe control algorithm by running
 ```sh
  python safe_control.py
