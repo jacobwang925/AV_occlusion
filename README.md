@@ -48,6 +48,7 @@ which will save 'risk_lookup_table.csv' with four columns: initial position, ini
 * vdelta
 * time_horizon
 * N
+
 If CARLA crashes with the error message: "Disabling core dumps. Signal 11 caught", set the argument 'N' in create_risk_lookup.py smaller, adjust the number of iterations in shell file and run 
 ```sh
  ./lookup.sh
