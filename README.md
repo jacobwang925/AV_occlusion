@@ -39,8 +39,16 @@ To get a lookup table, set your desired range of initial position, range of init
 ```sh
  python create_risk_lookup.py
 ```
-which will save 'risk_lookup_table.csv' with four columns: initial position, initial speed, total number of safe trials, and total number of unsafe trials.
-If CARLA crashes with the error message: "Disabling core dumps. Signal 11 caught", adjust the number of iterations and run 
+which will save 'risk_lookup_table.csv' with four columns: initial position, initial speed, total number of safe trials, and total number of unsafe trials. There are arguments to customize the range of initial states and discretization:
+* xmin
+* xmax
+* xdelta
+* vmin
+* vmax
+* vdelta
+* time_horizon
+* N
+If CARLA crashes with the error message: "Disabling core dumps. Signal 11 caught", set the argument 'N' in create_risk_lookup.py smaller, adjust the number of iterations in shell file and run 
 ```sh
  ./lookup.sh
 ```
@@ -56,16 +64,16 @@ Launch a terminal in the root of the code and implement safe control algorithm b
 ```
 which will execute the safe controller. 
 Arguments are described as below:
-* init_pos  =  initial position
-* init_speed  =  initial speed
-* alpha  =  control constant
-* epsilon  =  risk tolerance
+* init_pos: initial position
+* init_speed: initial speed
+* alpha: control constant
+* epsilon: risk tolerance
 * save: save frames to produce simulation birds' eye view video
-* save_brake  =  save velocity and control(brake or throttle command) versus time plot
-* save_pos  =  save position versus time plot
-* save_prob  =  save safety probability versus time plot
-* save_time  =  save simulation time in 'safe_control_time.txt'
-* save_trajectory  =  save velocity, position, control, and safety probability in files 'safe_velocity.txt', 'safe_position.txt', 'safe_u.txt', and 'safe_F.txt' respectively.
+* save_brake :save velocity and control(brake or throttle command) versus time plot
+* save_pos: save position versus time plot
+* save_prob: save safety probability versus time plot
+* save_time: save simulation time in 'safe_control_time.txt'
+* save_trajectory: save velocity, position, control, and safety probability in files 'safe_velocity.txt', 'safe_position.txt', 'safe_u.txt', and 'safe_F.txt' respectively.
 
 
 
