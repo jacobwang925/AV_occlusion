@@ -47,7 +47,6 @@ If CARLA crashes with the error message: "Disabling core dumps. Signal 11 caught
 which will restart CARLA each iteration, and save a sequence of CSV files.
 To visualize the risk lookup table, please refer to the **visualization and evaluation** section.
 
-
 ## Safe Control
 
 The risk lookup table we used to run the following experiments is uploaded here as 'risk_lookup_table.csv', where we preprocessed the data saved from the previous section. We calculated the safety probability of each state, and only kept the value of initial position, initial speed, safety probability without column names.
@@ -88,6 +87,7 @@ and launch another terminal and go to the root of 'transfuser_control.py'
  conda activate tfuse-1
  python transfuser_control.py --init_pos=-38 --init_speed=0 --save_trajectory=True
 ```
+(Notes: we use initial position as -38m in the simulation where the pedestrians are at 82m. But we transfer the initial position to -120m in the paper, as we set the pedestrian as the origin.)
 And then use the trajectory obtained to produce the velocity vs time or velocity vs distance plot by
 ```sh
  python velocity_time.py
@@ -95,3 +95,8 @@ And then use the trajectory obtained to produce the velocity vs time or velocity
 ```
 we also uploaded our experiment trajectory results(text files) in this folder.
 **Figure 1** and **Figure 2** source files are 'intersection_3D_figure.pptx' and 'carla_setup.pptx'.
+
+To reproduce **Table II**, set the initial states
+```sh
+ python create_time_risk.py
+```
