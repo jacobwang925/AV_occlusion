@@ -96,7 +96,8 @@ And then use the trajectory obtained to produce the velocity vs time or velocity
 we also uploaded our experiment trajectory results(text files) in this folder.
 **Figure 1** and **Figure 2** source files are 'intersection_3D_figure.pptx' and 'carla_setup.pptx'.
 
-To reproduce **Table II**, set the initial states
+To reproduce **Table II**, set the initial states and number of trials, run
 ```sh
  python create_time_risk.py
 ```
+which will save 4 files 'safe_control_risk.csv', 'cruise_control_risk.csv', ''risk_control_risk, 'transfuser_control_risk.csv', with columns 'init_pos', 'init_speed', 'tolerance', 'total_safe', 'total_unsafe', 'safety_probability', and 'average_time_horizon'.
