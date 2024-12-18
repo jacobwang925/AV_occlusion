@@ -88,7 +88,7 @@ For **Figure 3**, run the following which will save the plot in 'table_trajector
 For **Figure 4**, first run four control methods(PID, risk-based, Transfuser, proposed) to save their trajectories by
 ```sh
  python pid_control.py --init_pos=-38 --init_speed=0 --save_trajectory=True
- python risk_based_control.py --init_pos=-38 --init_speed=0 --epsilon=0.05 --save_trajectory=True
+ python risk_based_control.py --init_pos=-38 --init_speed=0 --epsilon=0.02 --save_trajectory=True
  python safe_control.py --init_pos=-38 --init_speed=0 --epsilon=0.05 --alpha=0.2 --save_trajectory=True
 ```
 and launch another terminal and go to the root of 'transfuser_control.py'
