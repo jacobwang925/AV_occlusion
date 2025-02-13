@@ -114,3 +114,5 @@ To reproduce **Table II**, set the initial states and number of trials, run
  python create_time_risk.py
 ```
 which will save 4 files 'safe_control_risk.csv', 'cruise_control_risk.csv', 'risk_control_risk', 'transfuser_control_risk.csv', with columns 'init_pos', 'init_speed', 'tolerance', 'total_safe', 'total_unsafe', 'safety_probability', and 'average_time_horizon'.
+
+The code for plotting Figure 5 can be found at: [Figure_5.ipynb](https://colab.research.google.com/drive/1ZOmGRfEGCCozjD5iQtIjaN3IQuKomPJj#scrollTo=58qCO4V4IPtw)
