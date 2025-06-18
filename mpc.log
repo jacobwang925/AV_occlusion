@@ -1,0 +1,352 @@
+[2025-06-17 18:59:55,901] [INFO] tick: 1, speed: -1.269375804469064e-08, pos: 0.0
+[2025-06-17 18:59:55,901] [INFO] nominal control
+[2025-06-17 18:59:55,901] [INFO] acc = 2
+[2025-06-17 18:59:55,901] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 18:59:56,314] [INFO] tick: 2, speed: -2.4104700457883155e-09, pos: 0.0
+[2025-06-17 18:59:56,315] [INFO] nominal control
+[2025-06-17 18:59:56,315] [INFO] acc = 2
+[2025-06-17 18:59:56,315] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 18:59:56,743] [INFO] tick: 3, speed: 1.1535933097661655e-08, pos: 0.0
+[2025-06-17 18:59:56,743] [INFO] nominal control
+[2025-06-17 18:59:56,743] [INFO] acc = 2
+[2025-06-17 18:59:56,744] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 18:59:57,165] [INFO] tick: 4, speed: -2.929446019095394e-09, pos: 0.0
+[2025-06-17 18:59:57,166] [INFO] nominal control
+[2025-06-17 18:59:57,166] [INFO] acc = 2
+[2025-06-17 18:59:57,166] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 18:59:57,602] [INFO] tick: 5, speed: 8.175891963446702e-09, pos: 0.0
+[2025-06-17 18:59:57,603] [INFO] nominal control
+[2025-06-17 18:59:57,603] [INFO] acc = 2
+[2025-06-17 18:59:57,603] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 18:59:58,009] [INFO] tick: 6, speed: 8.289403830019637e-09, pos: 0.0
+[2025-06-17 18:59:58,009] [INFO] nominal control
+[2025-06-17 18:59:58,009] [INFO] acc = 2
+[2025-06-17 18:59:58,009] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 18:59:58,445] [INFO] tick: 7, speed: 1.0457288368570516e-08, pos: 0.0
+[2025-06-17 18:59:58,445] [INFO] nominal control
+[2025-06-17 18:59:58,445] [INFO] acc = 2
+[2025-06-17 18:59:58,445] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 18:59:58,857] [INFO] tick: 8, speed: -1.6721449114243114e-08, pos: 0.0
+[2025-06-17 18:59:58,857] [INFO] nominal control
+[2025-06-17 18:59:58,857] [INFO] acc = 2
+[2025-06-17 18:59:58,857] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 18:59:59,295] [INFO] tick: 9, speed: 0.0, pos: 0.0
+[2025-06-17 18:59:59,295] [INFO] nominal control
+[2025-06-17 18:59:59,295] [INFO] acc = 2
+[2025-06-17 18:59:59,295] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 18:59:59,724] [INFO] tick: 10, speed: 5.863936447525475e-09, pos: 0.0
+[2025-06-17 18:59:59,725] [INFO] nominal control
+[2025-06-17 18:59:59,725] [INFO] acc = 2
+[2025-06-17 18:59:59,725] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:00,155] [INFO] tick: 11, speed: 0.7509284019470215, pos: 0.0256195068359375
+[2025-06-17 19:00:00,155] [INFO] nominal control
+[2025-06-17 19:00:00,155] [INFO] acc = 2
+[2025-06-17 19:00:00,155] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:00,576] [INFO] tick: 12, speed: 2.412590980529785, pos: 0.287353515625
+[2025-06-17 19:00:00,576] [INFO] nominal control
+[2025-06-17 19:00:00,576] [INFO] acc = 2
+[2025-06-17 19:00:00,576] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:01,014] [INFO] tick: 13, speed: 3.4814884662628174, pos: 0.743072509765625
+[2025-06-17 19:00:01,014] [INFO] nominal control
+[2025-06-17 19:00:01,014] [INFO] acc = 2
+[2025-06-17 19:00:01,014] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:01,442] [INFO] tick: 14, speed: 4.298156261444092, pos: 1.3350982666015625
+[2025-06-17 19:00:01,442] [INFO] nominal control
+[2025-06-17 19:00:01,442] [INFO] acc = 2
+[2025-06-17 19:00:01,442] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:01,884] [INFO] tick: 15, speed: 5.020063877105713, pos: 2.04058837890625
+[2025-06-17 19:00:01,885] [INFO] nominal control
+[2025-06-17 19:00:01,885] [INFO] acc = 0
+[2025-06-17 19:00:01,885] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:02,309] [INFO] tick: 16, speed: 5.6952738761901855, pos: 2.8507232666015625
+[2025-06-17 19:00:02,310] [INFO] nominal control
+[2025-06-17 19:00:02,310] [INFO] acc = 0
+[2025-06-17 19:00:02,310] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:02,728] [INFO] tick: 17, speed: 5.947460174560547, pos: 3.734405517578125
+[2025-06-17 19:00:02,728] [INFO] nominal control
+[2025-06-17 19:00:02,729] [INFO] acc = 0
+[2025-06-17 19:00:02,729] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:03,177] [INFO] tick: 18, speed: 5.745980262756348, pos: 4.612579345703125
+[2025-06-17 19:00:03,177] [INFO] nominal control
+[2025-06-17 19:00:03,177] [INFO] acc = 0
+[2025-06-17 19:00:03,177] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:03,608] [INFO] tick: 19, speed: 5.409909725189209, pos: 5.4469451904296875
+[2025-06-17 19:00:03,608] [INFO] nominal control
+[2025-06-17 19:00:03,608] [INFO] acc = 0
+[2025-06-17 19:00:03,608] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:04,046] [INFO] tick: 20, speed: 5.02338171005249, pos: 6.226348876953125
+[2025-06-17 19:00:04,047] [INFO] nominal control
+[2025-06-17 19:00:04,047] [INFO] acc = 0
+[2025-06-17 19:00:04,047] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:04,486] [INFO] tick: 21, speed: 4.695862770080566, pos: 6.95269775390625
+[2025-06-17 19:00:04,486] [INFO] nominal control
+[2025-06-17 19:00:04,486] [INFO] acc = 2
+[2025-06-17 19:00:04,486] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:04,917] [INFO] tick: 22, speed: 4.380672454833984, pos: 7.63018798828125
+[2025-06-17 19:00:04,918] [INFO] nominal control
+[2025-06-17 19:00:04,918] [INFO] acc = 2
+[2025-06-17 19:00:04,918] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:05,355] [INFO] tick: 23, speed: 4.354926586151123, pos: 8.278701782226562
+[2025-06-17 19:00:05,356] [INFO] nominal control
+[2025-06-17 19:00:05,356] [INFO] acc = 2
+[2025-06-17 19:00:05,356] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:05,799] [INFO] tick: 24, speed: 4.752286434173584, pos: 8.962081909179688
+[2025-06-17 19:00:05,800] [INFO] nominal control
+[2025-06-17 19:00:05,800] [INFO] acc = 2
+[2025-06-17 19:00:05,800] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:06,221] [INFO] tick: 25, speed: 5.310725688934326, pos: 9.720504760742188
+[2025-06-17 19:00:06,222] [INFO] nominal control
+[2025-06-17 19:00:06,222] [INFO] acc = 0
+[2025-06-17 19:00:06,222] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:06,644] [INFO] tick: 26, speed: 5.916992664337158, pos: 10.567886352539062
+[2025-06-17 19:00:06,645] [INFO] nominal control
+[2025-06-17 19:00:06,645] [INFO] acc = 0
+[2025-06-17 19:00:06,645] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:07,078] [INFO] tick: 27, speed: 6.1373443603515625, pos: 11.481948852539062
+[2025-06-17 19:00:07,078] [INFO] nominal control
+[2025-06-17 19:00:07,079] [INFO] acc = 0
+[2025-06-17 19:00:07,079] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:07,512] [INFO] tick: 28, speed: 5.9218597412109375, pos: 12.38726806640625
+[2025-06-17 19:00:07,513] [INFO] nominal control
+[2025-06-17 19:00:07,513] [INFO] acc = 0
+[2025-06-17 19:00:07,513] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:07,940] [INFO] tick: 29, speed: 5.582596302032471, pos: 13.247802734375
+[2025-06-17 19:00:07,941] [INFO] nominal control
+[2025-06-17 19:00:07,941] [INFO] acc = 0
+[2025-06-17 19:00:07,941] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:08,373] [INFO] tick: 30, speed: 5.19224739074707, pos: 14.052764892578125
+[2025-06-17 19:00:08,374] [INFO] nominal control
+[2025-06-17 19:00:08,374] [INFO] acc = 0
+[2025-06-17 19:00:08,374] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:08,818] [INFO] tick: 31, speed: 4.836901664733887, pos: 14.801467895507812
+[2025-06-17 19:00:08,819] [INFO] nominal control
+[2025-06-17 19:00:08,819] [INFO] acc = 2
+[2025-06-17 19:00:08,819] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:09,264] [INFO] tick: 32, speed: 4.515398979187012, pos: 15.499618530273438
+[2025-06-17 19:00:09,264] [INFO] nominal control
+[2025-06-17 19:00:09,264] [INFO] acc = 2
+[2025-06-17 19:00:09,265] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:09,688] [INFO] tick: 33, speed: 4.4816131591796875, pos: 16.167678833007812
+[2025-06-17 19:00:09,688] [INFO] nominal control
+[2025-06-17 19:00:09,688] [INFO] acc = 2
+[2025-06-17 19:00:09,688] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:10,147] [INFO] tick: 34, speed: 4.873892307281494, pos: 16.869598388671875
+[2025-06-17 19:00:10,148] [INFO] nominal control
+[2025-06-17 19:00:10,148] [INFO] acc = 2
+[2025-06-17 19:00:10,148] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:10,570] [INFO] tick: 35, speed: 5.429716110229492, pos: 17.646026611328125
+[2025-06-17 19:00:10,570] [INFO] nominal control
+[2025-06-17 19:00:10,570] [INFO] acc = 0
+[2025-06-17 19:00:10,571] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:11,033] [INFO] tick: 36, speed: 6.033581256866455, pos: 18.511077880859375
+[2025-06-17 19:00:11,033] [INFO] nominal control
+[2025-06-17 19:00:11,034] [INFO] acc = 0
+[2025-06-17 19:00:11,034] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:11,478] [INFO] tick: 37, speed: 6.252455234527588, pos: 19.4425048828125
+[2025-06-17 19:00:11,479] [INFO] nominal control
+[2025-06-17 19:00:11,479] [INFO] acc = 0
+[2025-06-17 19:00:11,479] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:11,923] [INFO] tick: 38, speed: 6.03399133682251, pos: 20.3648681640625
+[2025-06-17 19:00:11,924] [INFO] nominal control
+[2025-06-17 19:00:11,924] [INFO] acc = 0
+[2025-06-17 19:00:11,924] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:12,360] [INFO] tick: 39, speed: 5.69273567199707, pos: 21.24200439453125
+[2025-06-17 19:00:12,360] [INFO] nominal control
+[2025-06-17 19:00:12,360] [INFO] acc = 0
+[2025-06-17 19:00:12,360] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:12,790] [INFO] tick: 40, speed: 5.300266742706299, pos: 22.063323974609375
+[2025-06-17 19:00:12,791] [INFO] nominal control
+[2025-06-17 19:00:12,791] [INFO] acc = 0
+[2025-06-17 19:00:12,791] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:13,237] [INFO] tick: 41, speed: 4.925124645233154, pos: 22.827011108398438
+[2025-06-17 19:00:13,237] [INFO] nominal control
+[2025-06-17 19:00:13,237] [INFO] acc = 2
+[2025-06-17 19:00:13,237] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:13,675] [INFO] tick: 42, speed: 4.60213041305542, pos: 23.538314819335938
+[2025-06-17 19:00:13,675] [INFO] nominal control
+[2025-06-17 19:00:13,675] [INFO] acc = 2
+[2025-06-17 19:00:13,675] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:14,107] [INFO] tick: 43, speed: 4.563957214355469, pos: 24.219024658203125
+[2025-06-17 19:00:14,107] [INFO] nominal control
+[2025-06-17 19:00:14,107] [INFO] acc = 2
+[2025-06-17 19:00:14,107] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:14,547] [INFO] tick: 44, speed: 4.9531731605529785, pos: 24.933029174804688
+[2025-06-17 19:00:14,547] [INFO] nominal control
+[2025-06-17 19:00:14,547] [INFO] acc = 2
+[2025-06-17 19:00:14,547] [INFO] VehicleControl(throttle=1.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:14,985] [INFO] tick: 45, speed: 5.507197380065918, pos: 25.72119140625
+[2025-06-17 19:00:14,985] [INFO] nominal control
+[2025-06-17 19:00:14,985] [INFO] acc = 0
+[2025-06-17 19:00:14,986] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:15,432] [INFO] tick: 46, speed: 6.1093974113464355, pos: 26.597686767578125
+[2025-06-17 19:00:15,432] [INFO] nominal control
+[2025-06-17 19:00:15,432] [INFO] acc = 0
+[2025-06-17 19:00:15,432] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:15,874] [INFO] tick: 47, speed: 6.327248573303223, pos: 27.540390014648438
+[2025-06-17 19:00:15,874] [INFO] nominal control
+[2025-06-17 19:00:15,874] [INFO] acc = 0
+[2025-06-17 19:00:15,874] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:16,329] [INFO] tick: 48, speed: 6.106827735900879, pos: 28.473785400390625
+[2025-06-17 19:00:16,330] [INFO] nominal control
+[2025-06-17 19:00:16,330] [INFO] acc = 0
+[2025-06-17 19:00:16,330] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:16,831] [INFO] tick: 49, speed: 5.763812065124512, pos: 29.361663818359375
+[2025-06-17 19:00:16,831] [INFO] mpc control
+[2025-06-17 19:00:16,831] [INFO] acc = -0.33463580850603025
+[2025-06-17 19:00:16,832] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.167318, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:17,576] [INFO] tick: 50, speed: 5.348362445831299, pos: 30.193038940429688
+[2025-06-17 19:00:17,577] [INFO] mpc control
+[2025-06-17 19:00:17,577] [INFO] acc = -0.29304201932451135
+[2025-06-17 19:00:17,577] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.146521, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:18,064] [INFO] tick: 51, speed: 4.852388858795166, pos: 30.954055786132812
+[2025-06-17 19:00:18,064] [INFO] mpc control
+[2025-06-17 19:00:18,064] [INFO] acc = -0.24503293693376535
+[2025-06-17 19:00:18,064] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.122516, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:18,512] [INFO] tick: 52, speed: 4.391654968261719, pos: 31.643020629882812
+[2025-06-17 19:00:18,512] [INFO] mpc control
+[2025-06-17 19:00:18,512] [INFO] acc = -0.20363031613063493
+[2025-06-17 19:00:18,512] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.101815, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:18,956] [INFO] tick: 53, speed: 3.9713964462280273, pos: 32.266143798828125
+[2025-06-17 19:00:18,956] [INFO] mpc control
+[2025-06-17 19:00:18,956] [INFO] acc = -0.168742652705782
+[2025-06-17 19:00:18,956] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.084371, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:19,463] [INFO] tick: 54, speed: 3.5954084396362305, pos: 32.83000183105469
+[2025-06-17 19:00:19,463] [INFO] mpc control
+[2025-06-17 19:00:19,464] [INFO] acc = -0.1399930946553764
+[2025-06-17 19:00:19,464] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.069997, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:19,940] [INFO] tick: 55, speed: 3.260655403137207, pos: 33.34089660644531
+[2025-06-17 19:00:19,941] [INFO] mpc control
+[2025-06-17 19:00:19,941] [INFO] acc = -0.11642665829820778
+[2025-06-17 19:00:19,941] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.058213, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:20,511] [INFO] tick: 56, speed: 2.962353229522705, pos: 33.804718017578125
+[2025-06-17 19:00:20,511] [INFO] mpc control
+[2025-06-17 19:00:20,511] [INFO] acc = -0.09708465432162514
+[2025-06-17 19:00:20,511] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.048542, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:21,114] [INFO] tick: 57, speed: 2.695821762084961, pos: 34.22645568847656
+[2025-06-17 19:00:21,115] [INFO] mpc control
+[2025-06-17 19:00:21,115] [INFO] acc = -0.08115791461991125
+[2025-06-17 19:00:21,115] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.040579, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:21,585] [INFO] tick: 58, speed: 2.4569647312164307, pos: 34.610626220703125
+[2025-06-17 19:00:21,585] [INFO] mpc control
+[2025-06-17 19:00:21,585] [INFO] acc = -0.06799685573911973
+[2025-06-17 19:00:21,586] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.033998, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:22,040] [INFO] tick: 59, speed: 2.242427110671997, pos: 34.96099853515625
+[2025-06-17 19:00:22,040] [INFO] mpc control
+[2025-06-17 19:00:22,041] [INFO] acc = -0.05709120528869151
+[2025-06-17 19:00:22,041] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.028546, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:22,499] [INFO] tick: 60, speed: 2.043649673461914, pos: 35.28077697753906
+[2025-06-17 19:00:22,500] [INFO] mpc control
+[2025-06-17 19:00:22,500] [INFO] acc = -0.04776507562468907
+[2025-06-17 19:00:22,500] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.023883, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:22,938] [INFO] tick: 61, speed: 1.8586786985397339, pos: 35.57179260253906
+[2025-06-17 19:00:22,938] [INFO] mpc control
+[2025-06-17 19:00:22,938] [INFO] acc = -0.0397746846051875
+[2025-06-17 19:00:22,938] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.019887, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:23,393] [INFO] tick: 62, speed: 1.67708420753479, pos: 35.83537292480469
+[2025-06-17 19:00:23,393] [INFO] mpc control
+[2025-06-17 19:00:23,393] [INFO] acc = -0.03258005026040026
+[2025-06-17 19:00:23,393] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.016290, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:23,851] [INFO] tick: 63, speed: 1.5065503120422363, pos: 36.07269287109375
+[2025-06-17 19:00:23,852] [INFO] mpc control
+[2025-06-17 19:00:23,852] [INFO] acc = -0.02643648058214908
+[2025-06-17 19:00:23,852] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.013218, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:24,301] [INFO] tick: 64, speed: 1.3359615802764893, pos: 36.28434753417969
+[2025-06-17 19:00:24,301] [INFO] mpc control
+[2025-06-17 19:00:24,301] [INFO] acc = -0.020891561300661256
+[2025-06-17 19:00:24,301] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.010446, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:24,754] [INFO] tick: 65, speed: 1.1721158027648926, pos: 36.47108459472656
+[2025-06-17 19:00:24,754] [INFO] mpc control
+[2025-06-17 19:00:24,755] [INFO] acc = -0.016152016128312026
+[2025-06-17 19:00:24,755] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.008076, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:25,209] [INFO] tick: 66, speed: 0.0001358568697469309, pos: 36.55706787109375
+[2025-06-17 19:00:25,209] [INFO] mpc control
+[2025-06-17 19:00:25,209] [INFO] acc = -2.1743418905858455e-10
+[2025-06-17 19:00:25,209] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:25,653] [INFO] tick: 67, speed: 0.039402954280376434, pos: 36.558258056640625
+[2025-06-17 19:00:25,653] [INFO] mpc control
+[2025-06-17 19:00:25,653] [INFO] acc = -1.8290870437097613e-05
+[2025-06-17 19:00:25,653] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000009, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:26,095] [INFO] tick: 68, speed: -6.221880903467536e-05, pos: 36.56005859375
+[2025-06-17 19:00:26,095] [INFO] mpc control
+[2025-06-17 19:00:26,095] [INFO] acc = -4.5607746728925775e-11
+[2025-06-17 19:00:26,095] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:26,560] [INFO] tick: 69, speed: -2.7191317713004537e-05, pos: 36.56011962890625
+[2025-06-17 19:00:26,560] [INFO] mpc control
+[2025-06-17 19:00:26,560] [INFO] acc = -8.71076629463293e-12
+[2025-06-17 19:00:26,560] [INFO] VehicleControl(throttle=0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:27,026] [INFO] tick: 70, speed: 0.0, pos: 36.56013488769531
+[2025-06-17 19:00:27,026] [INFO] mpc control
+[2025-06-17 19:00:27,026] [INFO] acc = -0.0
+[2025-06-17 19:00:27,027] [INFO] VehicleControl(throttle=-0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:27,477] [INFO] tick: 71, speed: 0.0, pos: 36.56013488769531
+[2025-06-17 19:00:27,478] [INFO] mpc control
+[2025-06-17 19:00:27,478] [INFO] acc = -0.0
+[2025-06-17 19:00:27,478] [INFO] VehicleControl(throttle=-0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:27,909] [INFO] tick: 72, speed: 0.0, pos: 36.56013488769531
+[2025-06-17 19:00:27,910] [INFO] mpc control
+[2025-06-17 19:00:27,910] [INFO] acc = -0.0
+[2025-06-17 19:00:27,910] [INFO] VehicleControl(throttle=-0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:28,344] [INFO] tick: 73, speed: 0.0, pos: 36.56013488769531
+[2025-06-17 19:00:28,344] [INFO] mpc control
+[2025-06-17 19:00:28,344] [INFO] acc = -0.0
+[2025-06-17 19:00:28,344] [INFO] VehicleControl(throttle=-0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:28,809] [INFO] tick: 74, speed: 0.0, pos: 36.56013488769531
+[2025-06-17 19:00:28,810] [INFO] mpc control
+[2025-06-17 19:00:28,810] [INFO] acc = -0.0
+[2025-06-17 19:00:28,810] [INFO] VehicleControl(throttle=-0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:29,245] [INFO] tick: 75, speed: 0.0, pos: 36.56013488769531
+[2025-06-17 19:00:29,246] [INFO] mpc control
+[2025-06-17 19:00:29,246] [INFO] acc = -0.0
+[2025-06-17 19:00:29,246] [INFO] VehicleControl(throttle=-0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:29,682] [INFO] tick: 76, speed: 0.0, pos: 36.56013488769531
+[2025-06-17 19:00:29,683] [INFO] mpc control
+[2025-06-17 19:00:29,683] [INFO] acc = -0.0
+[2025-06-17 19:00:29,683] [INFO] VehicleControl(throttle=-0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:30,121] [INFO] tick: 77, speed: 0.0, pos: 36.56013488769531
+[2025-06-17 19:00:30,121] [INFO] mpc control
+[2025-06-17 19:00:30,122] [INFO] acc = -0.0
+[2025-06-17 19:00:30,122] [INFO] VehicleControl(throttle=-0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:30,610] [INFO] tick: 78, speed: 0.0, pos: 36.56013488769531
+[2025-06-17 19:00:30,610] [INFO] mpc control
+[2025-06-17 19:00:30,611] [INFO] acc = -0.0
+[2025-06-17 19:00:30,611] [INFO] VehicleControl(throttle=-0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:31,106] [INFO] tick: 79, speed: 0.0, pos: 36.56013488769531
+[2025-06-17 19:00:31,106] [INFO] mpc control
+[2025-06-17 19:00:31,106] [INFO] acc = -0.0
+[2025-06-17 19:00:31,107] [INFO] VehicleControl(throttle=-0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:31,599] [INFO] tick: 80, speed: 0.0, pos: 36.56013488769531
+[2025-06-17 19:00:31,600] [INFO] mpc control
+[2025-06-17 19:00:31,600] [INFO] acc = -0.0
+[2025-06-17 19:00:31,600] [INFO] VehicleControl(throttle=-0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:32,089] [INFO] tick: 81, speed: 0.0, pos: 36.56013488769531
+[2025-06-17 19:00:32,090] [INFO] mpc control
+[2025-06-17 19:00:32,090] [INFO] acc = -0.0
+[2025-06-17 19:00:32,090] [INFO] VehicleControl(throttle=-0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:32,555] [INFO] tick: 82, speed: 0.0, pos: 36.56013488769531
+[2025-06-17 19:00:32,555] [INFO] mpc control
+[2025-06-17 19:00:32,556] [INFO] acc = -0.0
+[2025-06-17 19:00:32,556] [INFO] VehicleControl(throttle=-0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:33,000] [INFO] tick: 83, speed: 0.0, pos: 36.56013488769531
+[2025-06-17 19:00:33,000] [INFO] mpc control
+[2025-06-17 19:00:33,000] [INFO] acc = -0.0
+[2025-06-17 19:00:33,000] [INFO] VehicleControl(throttle=-0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:33,439] [INFO] tick: 84, speed: 0.0, pos: 36.56013488769531
+[2025-06-17 19:00:33,440] [INFO] mpc control
+[2025-06-17 19:00:33,440] [INFO] acc = -0.0
+[2025-06-17 19:00:33,440] [INFO] VehicleControl(throttle=-0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:33,950] [INFO] tick: 85, speed: 0.0, pos: 36.56013488769531
+[2025-06-17 19:00:33,950] [INFO] mpc control
+[2025-06-17 19:00:33,950] [INFO] acc = -0.0
+[2025-06-17 19:00:33,950] [INFO] VehicleControl(throttle=-0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:34,393] [INFO] tick: 86, speed: 0.0, pos: 36.56013488769531
+[2025-06-17 19:00:34,394] [INFO] mpc control
+[2025-06-17 19:00:34,394] [INFO] acc = -0.0
+[2025-06-17 19:00:34,394] [INFO] VehicleControl(throttle=-0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:34,893] [INFO] tick: 87, speed: 0.0, pos: 36.56013488769531
+[2025-06-17 19:00:34,894] [INFO] mpc control
+[2025-06-17 19:00:34,894] [INFO] acc = -0.0
+[2025-06-17 19:00:34,894] [INFO] VehicleControl(throttle=-0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
+[2025-06-17 19:00:35,339] [INFO] tick: 88, speed: 0.0, pos: 36.56013488769531
+[2025-06-17 19:00:35,340] [INFO] mpc control
+[2025-06-17 19:00:35,340] [INFO] acc = -0.0
+[2025-06-17 19:00:35,340] [INFO] VehicleControl(throttle=-0.000000, steer=0.000000, brake=0.000000, hand_brake=False, reverse=False, manual_gear_shift=False, gear=0)
