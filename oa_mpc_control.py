@@ -30,26 +30,24 @@ import cv2
 
 import logging
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='[%(asctime)s] [%(levelname)s] %(message)s',
-    handlers=[
-        logging.FileHandler("mpc.log", mode='w'),
-        logging.StreamHandler()
-    ]
-)
-
-
-
 IM_WIDTH = 640
 IM_HEIGHT = 480
 
 POS_WALKER = 82.0
-HORIZON = 10 # s, for mpc
+HORIZON = 5 # s, for mpc
 MAX_ACC = 2 # m/s^2
 SAFETY_MARGIN = 3 # m
 
+log_name = 'mpc_' + str(HORIZON) + 's.log'
 
+logging.basicConfig(
+    level=logging.INFO,
+    format='[%(asctime)s] [%(levelname)s] %(message)s',
+    handlers=[
+        logging.FileHandler(log_name, mode='w'),
+        logging.StreamHandler()
+    ]
+)
 
 u_stats = []
 velocity_stats = []
@@ -167,30 +165,76 @@ def future_distance_integration(t, v_max, v_ego):
     else:
         return (0.5 * (v_ego + v_ego * MAX_ACC) * t)
 
-def oa_mpc_controller(v_ego, pos_ego, v_target, is_visible):
-    distance_to_intersection = POS_WALKER - pos_ego
+# def oa_mpc_controller(v_ego, pos_ego, v_target, is_visible):
+#     distance_to_intersection = POS_WALKER - pos_ego
 
-    if distance_to_intersection < 0:
-        logging.info('nominal control to pass intersection')
-        return MAX_ACC if v_ego < v_target else 0
+#     if distance_to_intersection < 0:
+#         logging.info('nominal control to pass intersection')
+#         if is_visible:
+#             return -MAX_ACC
+#         else:
+#             return MAX_ACC if v_ego < v_target else 0
+
+#     # # nominal control
+#     # cannot reach safety margin
+#     future_distance_to_stop = future_distance_integration(t=HORIZON, v_max=v_target, v_ego=v_ego)
+#     if future_distance_to_stop < distance_to_intersection - SAFETY_MARGIN:
+#         logging.info('nominal control')
+#         return MAX_ACC if v_ego < v_target else 0
+    
+#     # pass intersection within 2 seconds
+#     future_distance_to_pass = future_distance_integration(t=2, v_max=v_target, v_ego=v_ego)
+#     if future_distance_to_pass > distance_to_intersection and not is_visible:
+#         logging.info('nominal control')
+#         return MAX_ACC if v_ego < v_target else 0
+    
+#     # # oa_mpc control
+#     mpc_acc = - v_ego ** 2 / (2 * (distance_to_intersection - SAFETY_MARGIN))
+#     logging.info('mpc control')
+#     return max(-MAX_ACC, mpc_acc) # negative
+
+def oa_mpc_controller(v_ego, pos_ego, v_target, is_visible):
+    distance_to_stop = POS_WALKER - SAFETY_MARGIN - pos_ego
 
     # # nominal control
+    # passed safe zone
+    if distance_to_stop < 1e-3:
+        logging.info('nominal control to pass intersection')
+        if is_visible:
+            return -MAX_ACC
+        else:
+            return MAX_ACC if v_ego < v_target else 0
+
     # cannot reach safety margin
     future_distance_to_stop = future_distance_integration(t=HORIZON, v_max=v_target, v_ego=v_ego)
-    if future_distance_to_stop < distance_to_intersection - SAFETY_MARGIN:
-        logging.info('nominal control')
+    if future_distance_to_stop < distance_to_stop:
+        logging.info(f'nominal control cannot reach with {future_distance_to_stop}')
         return MAX_ACC if v_ego < v_target else 0
     
-    # pass intersection within 2 seconds
+    # can pass intersection within 2 seconds
     future_distance_to_pass = future_distance_integration(t=2, v_max=v_target, v_ego=v_ego)
-    if future_distance_to_pass > distance_to_intersection and not is_visible:
-        logging.info('nominal control')
+    if future_distance_to_pass > distance_to_stop + SAFETY_MARGIN and not is_visible:
+        logging.info(f'nominal control can pass with {future_distance_to_stop}')
         return MAX_ACC if v_ego < v_target else 0
-    
+
     # # oa_mpc control
-    mpc_acc = - v_ego ** 2 / (2 * (distance_to_intersection - SAFETY_MARGIN))
-    logging.info('mpc control')
-    return max(-MAX_ACC, mpc_acc) # negative
+    if v_ego >= 5e-1:
+        mpc_acc = - v_ego ** 2 / (2 * distance_to_stop)
+        logging.info(f'mpc control with min decceleration {max(-MAX_ACC, mpc_acc)}')
+        return max(-MAX_ACC, mpc_acc) # negative
+
+    else:
+        v_safe = np.sqrt(2 * MAX_ACC * distance_to_stop)
+
+        if abs(v_ego - v_safe) < 0.2:
+            logging.info(f'Hold: v_ego = {v_ego:.2f} within safe margin')
+            return 0.0
+        elif v_ego < min(v_target, v_safe):
+            logging.info(f'Safe to accelerate: v_ego = {v_ego:.2f} < min(v_target, v_safe) = {min(v_target, v_safe):.2f}')
+            return MAX_ACC
+        else:
+            logging.info(f'Unsafe: v_ego = {v_ego:.2f} > v_safe = {v_safe:.2f}, braking required')
+            return -MAX_ACC
 
 
 
@@ -272,11 +316,11 @@ def process(ego_vehicle, world, image_queue, spawn_points, init_pos, init_speed,
         # mapping to brake/throttle
         if u >= 0:
             u_stats.append(min(u, 1.0))
-            control = carla.VehicleControl(throttle=u/2, brake=0.0)
+            control = carla.VehicleControl(throttle=u/4, brake=0.0)
 
         else:
             u_stats.append(max(u, -1.0))
-            control = carla.VehicleControl(throttle=0.0, brake=abs(u/2))
+            control = carla.VehicleControl(throttle=0.0, brake=abs(u/5))
 
         if control is not None:
             logging.info(control)
@@ -285,17 +329,14 @@ def process(ego_vehicle, world, image_queue, spawn_points, init_pos, init_speed,
         # check for collision
         for walker in curr_walkers:
             if ego_vehicle.get_location().distance(walker.get_location()) < 3.0:
-                print("collision detected")
+                print("======collision detected======")
                 print("tick: ", tick_count)
-                if save_time:
-                    with open('safe_control_time.txt', 'a') as f:
-                        f.write(str(tick_count) + '\n')
-                with open('safe_control.txt', 'a') as f:
+                with open('mpc_control.txt', 'a') as f:
                     f.write('unsafe\n')
                 # set ego vehicle to stop
                 control = carla.VehicleControl(throttle=0.0, brake=1.0)
                 ego_vehicle.apply_control(control)
-                display_stats()
+                # display_stats()
                 return
 
         # check if vehicle is at the end of the road
@@ -304,11 +345,11 @@ def process(ego_vehicle, world, image_queue, spawn_points, init_pos, init_speed,
             print("=======safe!!!=======")
             print("tick: ", tick_count)
             if save_time:
-                with open('safe_control_time.txt', 'a') as f:
+                with open('mpc_control_time.txt', 'a') as f:
                     f.write(str(tick_count) + '\n')
-            with open('safe_control.txt', 'a') as f:
+            with open('mpc_control.txt', 'a') as f:
                 f.write('safe\n')
-            display_stats()
+            # display_stats()
             return
 
             
@@ -382,23 +423,23 @@ def main(save, save_pos, save_brake, save_trajectory, save_time, init_pos, init_
             walker.destroy()
             
         if save_trajectory:
-            open("safe_velocity.txt", "w").close()
-            with open("safe_velocity.txt", 'a') as f:
+            open("mpc_velocity.txt", "w").close()
+            with open("mpc_velocity.txt", 'a') as f:
                 f.write(" ".join([str(i) for i in velocity_stats]))
                 f.write('\n')
             
-            open("safe_u.txt", "w").close()
-            with open("safe_u.txt", 'a') as f:
+            open("mpc_u.txt", "w").close()
+            with open("mpc_u.txt", 'a') as f:
                 f.write(" ".join([str(i) for i in u_stats]))
                 f.write('\n')
             
-            open("safe_F.txt", "w").close()
-            with open("safe_F.txt", 'a') as f:
+            open("mpc_F.txt", "w").close()
+            with open("mpc_F.txt", 'a') as f:
                 f.write(" ".join([str(i) for i in safety_probability]))
                 f.write('\n')
             
-            open("safe_position.txt", "w").close()
-            with open("safe_position.txt", 'a') as f:
+            open("mpc_position.txt", "w").close()
+            with open("mpc_position.txt", 'a') as f:
                 f.write(" ".join([str(i) for i in position_stats]))
                 f.write('\n')
 
@@ -413,7 +454,7 @@ def main(save, save_pos, save_brake, save_trajectory, save_time, init_pos, init_
         if save_brake:
             # graph brake stats
             plt.plot(velocity_stats)
-            plt.plot(u_stats)
+            # plt.plot(u_stats)
             plt.ylabel('velocity & control')
             plt.xlabel('time')
             plt.savefig('brake_stats_' + str(int(time.time())) + '.png')
@@ -442,7 +483,7 @@ if __name__ == '__main__':
     parser.add_argument('--init_pos', type=float, default=0, help='Initial position of vehicle')
     parser.add_argument('--init_speed', type=float, default=0, help='Initial speed of vehicle')
     parser.add_argument('--num_walker', type=int, default=8, help='Number of walker spawned')
-    parser.add_argument('--save_file', type=str, default='safe_control.txt', help='File to save safe status')
+    parser.add_argument('--save_file', type=str, default='mpc_control.txt', help='File to save safe status')
     parser.add_argument('--save_trajectory', type=bool, default=False, help='Save brake stats')
     parser.add_argument('--save_time', type=bool, default=False, help='Save time horizon')
 
