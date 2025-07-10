@@ -34,9 +34,10 @@ IM_WIDTH = 640
 IM_HEIGHT = 480
 
 POS_WALKER = 82.0
-HORIZON = 5 # s, for mpc
+HORIZON = 10 # s, for mpc
 MAX_ACC = 2 # m/s^2
 SAFETY_MARGIN = 3 # m
+SAFE_V_THRESHOLD = 1 # m/s
 
 log_name = 'mpc_' + str(HORIZON) + 's.log'
 
@@ -198,7 +199,7 @@ def oa_mpc_controller(v_ego, pos_ego, v_target, is_visible):
 
     # # nominal control
     # passed safe zone
-    if distance_to_stop < 1e-3:
+    if distance_to_stop < 1:
         logging.info('nominal control to pass intersection')
         if is_visible:
             return -MAX_ACC
@@ -218,7 +219,7 @@ def oa_mpc_controller(v_ego, pos_ego, v_target, is_visible):
         return MAX_ACC if v_ego < v_target else 0
 
     # # oa_mpc control
-    if v_ego >= 5e-1:
+    if v_ego >= SAFE_V_THRESHOLD:
         mpc_acc = - v_ego ** 2 / (2 * distance_to_stop)
         logging.info(f'mpc control with min decceleration {max(-MAX_ACC, mpc_acc)}')
         return max(-MAX_ACC, mpc_acc) # negative
@@ -316,11 +317,11 @@ def process(ego_vehicle, world, image_queue, spawn_points, init_pos, init_speed,
         # mapping to brake/throttle
         if u >= 0:
             u_stats.append(min(u, 1.0))
-            control = carla.VehicleControl(throttle=u/4, brake=0.0)
+            control = carla.VehicleControl(throttle=u/5, brake=0.0)
 
         else:
             u_stats.append(max(u, -1.0))
-            control = carla.VehicleControl(throttle=0.0, brake=abs(u/5))
+            control = carla.VehicleControl(throttle=0.0, brake=abs(u/20))
 
         if control is not None:
             logging.info(control)
