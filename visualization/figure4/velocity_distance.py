@@ -70,20 +70,22 @@ def plot_stats(safe_v, safe_position, risk_v, risk_position, transfuser_v, trans
     smooth_pid_v = smooth_data(smooth_pid_v, 12)
     collision_point_pid = smooth_pid_v[-1]
     ax1.plot(pid_pos, smooth_pid_v, color='tab:blue', label='PID')
-    ax1.plot(pid_pos[-1], collision_point_pid, color='tab:blue', marker='s', markersize=7)
+    ax1.plot(transfuser_pos[-1], collision_point_pid, markeredgecolor='tab:blue', markerfacecolor='none', markeredgewidth=2, marker='s', markersize=7)
+    # ax1.plot(pid_pos[-1], collision_point_pid, color='tab:blue', marker='s', markersize=7)
 
     # transfuser
     smooth_transfuser_v = smooth_data(transfuser_v_stats[0], 12)
     smooth_transfuser_v = smooth_data(smooth_transfuser_v, 8, 1)
     collision_point_transfuser = smooth_transfuser_v[-1]
     ax1.plot(transfuser_pos, smooth_transfuser_v, color='tab:green', label='TransFuser')
-    ax1.plot(transfuser_pos[-1], collision_point_transfuser, color='tab:green', marker='s', markersize=7)
+    ax1.plot(transfuser_pos[-1], collision_point_transfuser, markeredgecolor='tab:green', markerfacecolor='none', markeredgewidth=2, marker='s', markersize=7)
+    # ax1.plot(transfuser_pos[-1], collision_point_transfuser, color='tab:green', marker='s', markersize=7)
     
     # risk-based
     smooth_risk_v = smooth_data(risk_v_stats[0], 15)
     smooth_risk_v = smooth_data(smooth_risk_v, 12)
     safe_point_risk = smooth_risk_v[-1]
-    ax1.plot(risk_pos, smooth_risk_v, color='tab:orange', label='Risk-Based')
+    ax1.plot(risk_pos, smooth_risk_v, color='tab:orange', label='Worst-Case')
     ax1.plot(risk_pos[-1], safe_point_risk, color='tab:orange', marker='^', markersize=8)
     
     # safe control

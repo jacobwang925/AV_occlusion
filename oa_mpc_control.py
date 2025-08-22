@@ -8,7 +8,6 @@ import csv
 
 # export PYTHONPATH=$PYTHONPATH:/home/plusai/Documents/carla9.10/PythonAPI/carla/dist/carla-0.9.10-py3.7-linux-x86_64.egg
 
-
 sys.path.append(os.path.abspath('../carla/agents/navigation'))
 import controller
   
@@ -29,14 +28,29 @@ import time
 import numpy as np
 import cv2
 
-import pid_control as carlaPid
-# from risk_calc import count_words
+import logging
 
 IM_WIDTH = 640
 IM_HEIGHT = 480
 
+POS_WALKER = 82.0
+HORIZON = 10 # s, for mpc
+MAX_ACC = 2 # m/s^2
+SAFETY_MARGIN = 3 # m
+SAFE_V_THRESHOLD = 1 # m/s
+
+log_name = 'mpc_' + str(HORIZON) + 's.log'
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='[%(asctime)s] [%(levelname)s] %(message)s',
+    handlers=[
+        logging.FileHandler(log_name, mode='w'),
+        logging.StreamHandler()
+    ]
+)
+
 u_stats = []
-# brake = []
 velocity_stats = []
 velocity_y = []
 position_stats = []
@@ -56,7 +70,6 @@ def process_img(image, world):
     return i3/255.0
 
 def spawn_walker(world, ego_vehicle, init_pos, walker_id):
-    # print(walker_id)
     walker_bp = random.choice(world.get_blueprint_library().filter('walker.pedestrian.*'))
     # create spawn point at intersection walking left to right
     spawn_point = carla.Transform()
@@ -67,14 +80,6 @@ def spawn_walker(world, ego_vehicle, init_pos, walker_id):
         loc.x += 82.0 - init_pos + 0.1
     loc.y += 12.0 + walker_id / 2
     loc.z += 1.0
-    # if walker_id == 0:
-    #     loc.x += 82.0 - init_pos
-    #     loc.y += 12.0
-    #     loc.z += 1.0
-    # else:
-    #     loc.x += 82.0 - init_pos
-    #     loc.y += 12.0 + walker_id / 2
-    #     loc.z += 1.0
     spawn_point.location = loc    
     walker = world.spawn_actor(walker_bp, spawn_point)
     curr_walkers.append(walker)
@@ -87,7 +92,6 @@ def spawn_occlusion(world, ego_vehicle, init_pos):
     loc = ego_vehicle.get_location()
     loc.x += 75.0 - init_pos
     loc.y += 5.0
-    # loc.y += 7.0
     loc.z += 1.0
     spawn_point.location = loc
     truck = world.spawn_actor(truck_bp, spawn_point)
@@ -138,35 +142,6 @@ def is_visible(walker, occlusion, occ_dimensions, ego_vehicle):
                         return True
     return False
 
-def safe_control_calc(ego_vehicle, dF_dv, delta_t, F, epsilon, alpha):
-    # # dF_dx * (v + u * delta_t) = - alpha (F - (1 - epsilon))
-    # v = ego_vehicle.get_velocity().x
-
-    # # solve for u
-    # right = -alpha * (F - (1 - epsilon))
-    # calc1 = right/dF_dx
-    # calc2 = calc1 - v
-    # u = calc2 / delta_t
-
-    # dF_dv * u = - alpha (F - (1 - epsilon))
-    # solve u
-    right = -alpha * (F - (1 - epsilon))
-    u = right / dF_dv
-
-    return u
-
-def find_closest_table_entry(x, v, lookup_table):
-    # find closest x and v in lookup table
-    min_dist = float('inf')
-    closest = None
-    for key in lookup_table.keys():
-        x_key, v_key = key
-        dist = np.sqrt((x - x_key)**2 + (v - v_key)**2)
-        if dist < min_dist:
-            min_dist = dist
-            closest = key # [x,v] state
-    return closest, lookup_table[closest]
-
 def display_stats():
     # display positions, velocities, and safety probabilities separately
     plt.plot(position_stats)
@@ -181,35 +156,91 @@ def display_stats():
     plt.title('Velocity')
     plt.show()
 
-    plt.plot(safety_probability)
-    plt.title('Safety Probability')
-    plt.show()   
+def future_distance_integration(t, v_max, v_ego):
+    if v_ego >= v_max:
+        return (v_max * t)
+    
+    time_to_max_speed = (v_max - v_ego) / MAX_ACC
+    if time_to_max_speed < t:
+        return (0.5 * (v_ego + v_max) * time_to_max_speed + v_max * (t - time_to_max_speed))
+    else:
+        return (0.5 * (v_ego + v_ego * MAX_ACC) * t)
 
-def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, init_speed, alpha, epsilon, emergency_activate, num_walker, save_time):
-    # parameters
-    # N = 3
-    # epsilon = 1e-3 # =================================
+# def oa_mpc_controller(v_ego, pos_ego, v_target, is_visible):
+#     distance_to_intersection = POS_WALKER - pos_ego
 
-    # spawn standard PID controller
-    # spawn a vehicle pid controller
-    # args_longitudinal = {
-    #     'K_P': 0.05,
-    #     'K_D': 0.1,
-    #     'K_I': 0.05,
-    #     'dt': 0.003
-    # }
+#     if distance_to_intersection < 0:
+#         logging.info('nominal control to pass intersection')
+#         if is_visible:
+#             return -MAX_ACC
+#         else:
+#             return MAX_ACC if v_ego < v_target else 0
+
+#     # # nominal control
+#     # cannot reach safety margin
+#     future_distance_to_stop = future_distance_integration(t=HORIZON, v_max=v_target, v_ego=v_ego)
+#     if future_distance_to_stop < distance_to_intersection - SAFETY_MARGIN:
+#         logging.info('nominal control')
+#         return MAX_ACC if v_ego < v_target else 0
+    
+#     # pass intersection within 2 seconds
+#     future_distance_to_pass = future_distance_integration(t=2, v_max=v_target, v_ego=v_ego)
+#     if future_distance_to_pass > distance_to_intersection and not is_visible:
+#         logging.info('nominal control')
+#         return MAX_ACC if v_ego < v_target else 0
+    
+#     # # oa_mpc control
+#     mpc_acc = - v_ego ** 2 / (2 * (distance_to_intersection - SAFETY_MARGIN))
+#     logging.info('mpc control')
+#     return max(-MAX_ACC, mpc_acc) # negative
+
+def oa_mpc_controller(v_ego, pos_ego, v_target, is_visible):
+    distance_to_stop = POS_WALKER - SAFETY_MARGIN - pos_ego
+
+    # # nominal control
+    # passed safe zone
+    if distance_to_stop < 1:
+        logging.info('nominal control to pass intersection')
+        if is_visible:
+            return -MAX_ACC
+        else:
+            return MAX_ACC if v_ego < v_target else 0
+
+    # cannot reach safety margin
+    future_distance_to_stop = future_distance_integration(t=HORIZON, v_max=v_target, v_ego=v_ego)
+    if future_distance_to_stop < distance_to_stop:
+        logging.info(f'nominal control cannot reach with {future_distance_to_stop}')
+        return MAX_ACC if v_ego < v_target else 0
+    
+    # can pass intersection within 2 seconds
+    future_distance_to_pass = future_distance_integration(t=2, v_max=v_target, v_ego=v_ego)
+    if future_distance_to_pass > distance_to_stop + SAFETY_MARGIN and not is_visible:
+        logging.info(f'nominal control can pass with {future_distance_to_stop}')
+        return MAX_ACC if v_ego < v_target else 0
+
+    # # oa_mpc control
+    if v_ego >= SAFE_V_THRESHOLD:
+        mpc_acc = - v_ego ** 2 / (2 * distance_to_stop)
+        logging.info(f'mpc control with min decceleration {max(-MAX_ACC, mpc_acc)}')
+        return max(-MAX_ACC, mpc_acc) # negative
+
+    else:
+        v_safe = np.sqrt(2 * MAX_ACC * distance_to_stop)
+
+        if abs(v_ego - v_safe) < 0.2:
+            logging.info(f'Hold: v_ego = {v_ego:.2f} within safe margin')
+            return 0.0
+        elif v_ego < min(v_target, v_safe):
+            logging.info(f'Safe to accelerate: v_ego = {v_ego:.2f} < min(v_target, v_safe) = {min(v_target, v_safe):.2f}')
+            return MAX_ACC
+        else:
+            logging.info(f'Unsafe: v_ego = {v_ego:.2f} > v_safe = {v_safe:.2f}, braking required')
+            return -MAX_ACC
+
+
+
+def process(ego_vehicle, world, image_queue, spawn_points, init_pos, init_speed, num_walker, save_time):
     target_speed = 5 #m/s
-
-    # =========== PID ============
-    # args_longitudinal = {
-    #     'K_P': 0.04,
-    #     'K_D': 0.03,
-    #     'K_I': 0.01,
-    #     'dt': 0.001
-    # }
-    # target_speed = 4.5 # m/s
-
-    # ego_control = controller.PIDLongitudinalController(ego_vehicle, **args_longitudinal)
 
     # random spawn walker
     # normal distribution
@@ -236,18 +267,7 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
                 if interval > 0:
                     break
             spawn_ticks[i] = interval + spawn_ticks[i-1]
-    # print(spawn_ticks)
-	
-    # poisson distribution
-    # poisson_interval = 130
-    # spawn_ticks = np.zeros(num_walker)
-    # for i in range(num_walker):
-    #     if i == 0:
-    #         spawn_ticks[i] = min(np.random.poisson(48, 1), 136)
-    #     else:
-    #         spawn_ticks[i] = min(np.random.poisson(poisson_interval, 1), poisson_interval*3) + spawn_ticks[i-1]
 
-    # print("start walker at tick:", spawn_tick)
     for walker_id in range(num_walker):
         spawn_walker(world, ego_vehicle, init_pos, walker_id)
 
@@ -256,17 +276,6 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
 
     # set initial speed
     ego_vehicle.set_target_velocity(carla.Vector3D(x=init_speed, y=0.0, z=0.0))
-
-    # pull in risk lookup table
-    lookup_table = {}
-    # with open('lookup_table_processed.csv', 'r', encoding='utf-8-sig') as file:
-    with open('risk_lookup_table.csv', 'r', encoding='utf-8-sig') as file:
-        reader = csv.reader(file)
-        for row in reader:
-            x = float(row[0])
-            v = float(row[1])
-            F = float(row[2])
-            lookup_table[(x, v)] = F
 
     tick_count = 0
     spawned = np.zeros(num_walker) # boolean to check if the nth walker is spawned
@@ -278,7 +287,6 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
         world.tick()
         image = image_queue.get()
         process_img(image, world)
-        
         # start walker
         for i in range(num_walker):
             if tick_count == spawn_ticks[i] and spawned[i] == 0:
@@ -288,137 +296,43 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
                 spawned[i] = 1
 
         # get current state of ego vehicle
-        pos = ego_vehicle.get_location().x - spawn_points[1].location.x + init_pos
+        pos = ego_vehicle.get_location().x - spawn_points[1].location.x + init_pos # default = 0.0
         speed = ego_vehicle.get_velocity().x
-        # if pos > 75.0 and pos < 76.0:
-            # print(tick_count)
-
-        # print("SIMULATING...")
-        
-        # # calculate risk
-        # for i in range(N):
-        #     carlaPid.simulate(time_horizon, pos, speed, False, None, False, "F.txt")
-        # Fcounts = count_words('F.txt', ['True', 'False'])
-        # F = Fcounts['True'] / N
-        # control = None
-        # print("DONE SIMULATING")
-
-        key, F = find_closest_table_entry(pos, speed, lookup_table)
-        key_x.append(key[0])
-        key_v.append(key[1])
+        logging.info(f'tick: {tick_count}, speed: {speed}, pos: {pos}')
 
         velocity_stats.append(speed)
         velocity_y.append(ego_vehicle.get_velocity().y)
         position_stats.append(pos)
-        safety_probability.append(F)
-        # print(f"pos: {pos}, speed: {speed}, safety probability: {F}, tick_count: {tick_count}")
 
-        # emergency stop if sees pedestrian
-        emergency_stop = False
-        if emergency_activate:
-            for curr_walker in curr_walkers:            
-                # check if walker is within box of sight of vehicle
-                emergency_stop = is_visible(curr_walker, occlusion, occlusion_dim, ego_vehicle)
-                if emergency_stop: # as long as one walker is in sight
-                    break
-        
-        current_speed = ego_vehicle.get_velocity().x
-        if F > 1 - epsilon or pos > 75.0:
-            u_stats.append(0)
-            if emergency_stop: # and pos < 79.5: # haven't passed the intersection
-                if pos >= 79.4:
-                    # print("========", pos, tick_count)
-                    control = carla.VehicleControl(throttle=0.4, brake=0.0)
-                else:
-                    # print("========", tick_count)
-                    control = carla.VehicleControl(throttle=0.0, brake=0.05)
-                # print(pos, current_speed)
-                # if current_speed < 1e-4 and pos >= 79.4: # 80.0:
-                #     print("hihi")
-                #     control = carla.VehicleControl(throttle=0.4, brake=0.0)
-                # # if current_speed <= 0.05:
-                # #     control = carla.VehicleControl(throttle=0.0, brake=0.0)
-                # else:
-                #     # print(tick_count, ego_vehicle.get_acceleration())
-                #     control = carla.VehicleControl(throttle=0.0, brake=0.05)
 
-            # nominal control
-            # PID
-            # elif current_speed < target_speed:
-            #     control = carla.VehicleControl(throttle=min(accel, 1.0), brake=0.0)
-            #     brake.append(0)
-            # else:
-            #     if tick_count < 7 * (init_speed - target_speed):
-            #         control = carla.VehicleControl(throttle=0.0, brake=0.3)
-            #     else:
-            #         control = carla.VehicleControl(throttle=0.0, brake=0.0)
-            #     brake.append(0)
+        visible = False
+        for curr_walker in curr_walkers:            
+            visible = is_visible(curr_walker, occlusion, occlusion_dim, ego_vehicle)
+            if visible: # as long as one walker is in sight
+                break
 
-            # throttle control
-            # else:
-            #     ego_vehicle.set_target_velocity(carla.Vector3D(x=target_speed, y=0.0, z=0.0))
-            #     control = None
-            elif current_speed < target_speed:
-                # print(current_speed, target_speed)
-                control = carla.VehicleControl(throttle=0.4, brake=0.0)
-            else:
-                if current_speed > target_speed + 0.2:
-                    control = carla.VehicleControl(throttle=0.0, brake=0.2)
-                # if tick_count < 4.0 * (init_speed - target_speed):
-                    # control = carla.VehicleControl(throttle=0.0, brake=0.2)
-                else:
-                    control = carla.VehicleControl(throttle=0.0, brake=0.0)
+        u = oa_mpc_controller(v_ego=speed, pos_ego=pos, v_target=target_speed, is_visible=visible)
 
-        else:   # safe controller
-            # print("SIMULATING (GRADIENT)...")
-            # print("safe control tick: ", tick_count)
-            # print(key)
-            # print(F,pos,current_speed)
-            # find gradient
-            dF_dv = 0
-            for delta_v in {1, 1.5, 2}:
-                _, Fplus = find_closest_table_entry(pos, speed+delta_v, lookup_table)
-                _, Fminus = find_closest_table_entry(pos, speed-delta_v, lookup_table)
-                dF_dv_temp = (Fplus - Fminus) / (2 * delta_v)
-                # print(Fplus, Fminus)
-                if dF_dv_temp != 0:
-                    dF_dv = dF_dv_temp
-                    break
+        logging.info(f'acc = {u}')
+        # mapping to brake/throttle
+        if u >= 0:
+            u_stats.append(min(u, 1.0))
+            control = carla.VehicleControl(throttle=u/5, brake=0.0)
 
-            if dF_dv == 0:
-                dF_dv = -0.1 # default value
-
-            # calculate control
-            delta_t = settings.fixed_delta_seconds
-            u = safe_control_calc(ego_vehicle, dF_dv, delta_t, F, epsilon, alpha)
-            
-            # if u is positive, apply throttle
-            if u > 0:
-                u_stats.append(min(3*u, 1.0))
-                control = carla.VehicleControl(throttle=3*u, brake=0.0)
-                # control = carla.VehicleControl(throttle=max(0.7,3*u), brake=0.0)
-                # if 3*u > 0.7:
-                #     u_stats.append(min(3*u,0.7))
-                # else:
-                #     u_stats.append(1)
-
-            else:
-                # print("abs(u):")
-                # print(abs(u))
-                # brake.append(abs(u))
-                u_stats.append(max(u, -1.0))
-                control = carla.VehicleControl(throttle=0.0, brake=abs(u))
-            
+        else:
+            u_stats.append(max(u, -1.0))
+            control = carla.VehicleControl(throttle=0.0, brake=abs(u/20))
 
         if control is not None:
+            logging.info(control)
             ego_vehicle.apply_control(control)
 
         # check for collision
         for walker in curr_walkers:
             if ego_vehicle.get_location().distance(walker.get_location()) < 3.0:
-                print("collision detected")
+                print("======collision detected======")
                 print("tick: ", tick_count)
-                with open('safe_control.txt', 'a') as f:
+                with open('mpc_control.txt', 'a') as f:
                     f.write('unsafe\n')
                 # set ego vehicle to stop
                 control = carla.VehicleControl(throttle=0.0, brake=1.0)
@@ -432,22 +346,16 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
             print("=======safe!!!=======")
             print("tick: ", tick_count)
             if save_time:
-                with open('safe_control_time.txt', 'a') as f:
+                with open('mpc_control_time.txt', 'a') as f:
                     f.write(str(tick_count) + '\n')
-            with open('safe_control.txt', 'a') as f:
+            with open('mpc_control.txt', 'a') as f:
                 f.write('safe\n')
-            # print('safe:', True, tick_count)
+            # display_stats()
             return
 
-    # display_stats()
-    plt.plot(velocity_y)
-    plt.title('Velocity on y axis')
-    plt.show()
-
-    print("done")
             
 
-def main(save, save_pos, save_prob, save_brake, save_trajectory, save_key, save_time, init_pos, init_speed, alpha, epsilon, emergency_activate, num_walker):    
+def main(save, save_pos, save_brake, save_trajectory, save_time, init_pos, init_speed, num_walker):
     try:
         client = carla.Client('localhost', 2026)
         client.set_timeout(2.0)
@@ -502,9 +410,9 @@ def main(save, save_pos, save_prob, save_brake, save_trajectory, save_key, save_
         sensor.listen(image_queue.put)
         actor_list.append(sensor)
 
-        print("start safe control")
+        print("start oa_mpc control")
 
-        safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, init_speed, alpha, epsilon, emergency_activate, num_walker, save_time)
+        process(ego_vehicle, world, image_queue, spawn_points, init_pos, init_speed, num_walker, save_time)
 
     finally:
         print('destroying actors')
@@ -514,33 +422,25 @@ def main(save, save_pos, save_prob, save_brake, save_trajectory, save_key, save_
         print("destroying walkers")
         for walker in curr_walkers:
             walker.destroy()
-        
-        if save_key:
-            with open("key_x.txt", 'a') as f:
-                f.write(" ".join([str(i) for i in key_x]))
-                f.write('\n')
-            with open("key_v.txt", 'a') as f:
-                f.write(" ".join([str(i) for i in key_v]))
-                f.write('\n')
             
         if save_trajectory:
-            open("safe_velocity.txt", "w").close()
-            with open("safe_velocity.txt", 'a') as f:
+            open("mpc_velocity.txt", "w").close()
+            with open("mpc_velocity.txt", 'a') as f:
                 f.write(" ".join([str(i) for i in velocity_stats]))
                 f.write('\n')
             
-            open("safe_u.txt", "w").close()
-            with open("safe_u.txt", 'a') as f:
+            open("mpc_u.txt", "w").close()
+            with open("mpc_u.txt", 'a') as f:
                 f.write(" ".join([str(i) for i in u_stats]))
                 f.write('\n')
             
-            open("safe_F.txt", "w").close()
-            with open("safe_F.txt", 'a') as f:
+            open("mpc_F.txt", "w").close()
+            with open("mpc_F.txt", 'a') as f:
                 f.write(" ".join([str(i) for i in safety_probability]))
                 f.write('\n')
             
-            open("safe_position.txt", "w").close()
-            with open("safe_position.txt", 'a') as f:
+            open("mpc_position.txt", "w").close()
+            with open("mpc_position.txt", 'a') as f:
                 f.write(" ".join([str(i) for i in position_stats]))
                 f.write('\n')
 
@@ -555,19 +455,12 @@ def main(save, save_pos, save_prob, save_brake, save_trajectory, save_key, save_
         if save_brake:
             # graph brake stats
             plt.plot(velocity_stats)
-            plt.plot(u_stats)
+            # plt.plot(u_stats)
             plt.ylabel('velocity & control')
             plt.xlabel('time')
             plt.savefig('brake_stats_' + str(int(time.time())) + '.png')
             plt.clf()
             print('brake stats saved')
-            
-        if save_prob:
-            plt.plot(safety_probability)
-            plt.ylabel('safety probability')
-            plt.xlabel('time')
-            plt.savefig('safety_prob_' + str(int(time.time())) + '.png')
-            print('safety probability saved')
 
         if save:
             # save frames
@@ -588,33 +481,24 @@ if __name__ == '__main__':
     parser.add_argument('--save_path', type=str, default='frames/', help='Path to save frames')
     parser.add_argument('--save_pos', type=bool, default=False, help='Save velocity, brake, and position stats')
     parser.add_argument('--save_brake', type=bool, default=False, help='Save brake stats')
-    parser.add_argument('--save_prob', type=bool, default=False, help='Save safety probability')
     parser.add_argument('--init_pos', type=float, default=0, help='Initial position of vehicle')
     parser.add_argument('--init_speed', type=float, default=0, help='Initial speed of vehicle')
-    parser.add_argument('--alpha', type=float, default=0.2, help='Safe controller parameter')
-    parser.add_argument('--epsilon', type=float, default=0.05, help='Safety tolerance')
-    parser.add_argument('--emergency_activate', type=bool, default=True, help='Emergency stop controller is activated')
     parser.add_argument('--num_walker', type=int, default=8, help='Number of walker spawned')
-    parser.add_argument('--save_file', type=str, default='safe_control.txt', help='File to save safe status')
+    parser.add_argument('--save_file', type=str, default='mpc_control.txt', help='File to save safe status')
     parser.add_argument('--save_trajectory', type=bool, default=False, help='Save brake stats')
-    parser.add_argument('--save_key', type=bool, default=False, help='Save closet key stats')
     parser.add_argument('--save_time', type=bool, default=False, help='Save time horizon')
 
     args = parser.parse_args()
+
     save = args.save
     save_path = args.save_path
     save_pos = args.save_pos
     save_brake = args.save_brake
-    save_prob = args.save_prob
     init_pos = args.init_pos
     init_speed = args.init_speed
-    alpha = args.alpha
-    epsilon = args.epsilon
-    emergency_activate = args.emergency_activate
     num_walker = args.num_walker
     save_file = args.save_file
     save_trajectory = args.save_trajectory
-    save_key = args.save_key
     save_time = args.save_time
 
-    main(save, save_pos, save_prob, save_brake, save_trajectory, save_key, save_time, init_pos, init_speed, alpha, epsilon, emergency_activate, num_walker)
+    main(save, save_pos, save_brake, save_trajectory, save_time, init_pos, init_speed, num_walker)
