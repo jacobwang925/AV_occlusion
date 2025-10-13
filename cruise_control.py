@@ -4,9 +4,6 @@ import sys
 import queue
 import matplotlib.pyplot as plt
 import argparse
-
-sys.path.append(os.path.abspath('../carla/agents/navigation'))
-import controller
   
 # reset sys.path
 sys.path = sys.path[:-1]
@@ -42,7 +39,7 @@ def process_img(image, world):
     world.wait_for_tick()
     return i3/255.0
 
-def spawn_walker(world, ego_vehicle, init_pos, in_sight, walker_id):
+def spawn_walker(world, ego_vehicle, init_pos, walker_id):
     walker_bp = random.choice(world.get_blueprint_library().filter('walker.pedestrian.*'))
 
     # create spawn point at intersection walking left to right
@@ -53,20 +50,8 @@ def spawn_walker(world, ego_vehicle, init_pos, in_sight, walker_id):
     else:
         loc.x += 82.0 - init_pos - 0.5
     loc.y += 12.0 + walker_id / 2
-    loc.z += 1.0
-    # if walker_id == 0: # if in_sight = True, then spawn the first walker at intersection
-    #     if in_sight:
-    #         loc.x += 82.0 - init_pos
-    #         loc.y += 12.0 - 11.0
-    #         loc.z += 1.0
-    #     else:
-    #         loc.x += 82.0 - init_pos
-    #         loc.y += 12.0
-    #         loc.z += 1.0
-    # else:
-    #     loc.x += 82.0 - init_pos
-    #     loc.y += 12.0 + walker_id / 2
-    #     loc.z += 1.0
+    loc.z += 1.0 # avoid collision with ground
+
     spawn_point.location = loc    
     walker = world.spawn_actor(walker_bp, spawn_point)
     curr_walkers.append(walker)
@@ -204,10 +189,7 @@ def main_control(ego_vehicle, world, image_queue, spawn_points, init_pos, init_s
         elif emergency_stop:
             if pos >= 79.4:
                 control = carla.VehicleControl(throttle=0.5, brake=0.0)
-            # elif current_speed <= 0.05:
-            #     control = carla.VehicleControl(throttle=0.0, brake=0.0)
             else:
-                # print(tick_count,ego_vehicle.get_acceleration())
                 control = carla.VehicleControl(throttle=0.0, brake=0.05)
         # accelerate when safe
         elif current_speed < target_speed and pos > 80:
@@ -223,7 +205,6 @@ def main_control(ego_vehicle, world, image_queue, spawn_points, init_pos, init_s
 
         # get current speed
         current_speed = ego_vehicle.get_velocity().x
-        # print(current_speed)
         velocity_stats.append(current_speed)
         velocity_y.append(ego_vehicle.get_velocity().y)
 
@@ -232,8 +213,6 @@ def main_control(ego_vehicle, world, image_queue, spawn_points, init_pos, init_s
             if ego_vehicle.get_location().distance(w.get_location()) < 3.0:
                 print("collision")
                 print("tick: ", tick_count)
-                # if ego_vehicle.get_location().x > spawn_points[1].location.x + 82.0 - init_pos:
-                    # safe = True
                 safe = False
                 # append safe to safe document
                 print('safe:', False)
@@ -285,12 +264,8 @@ def simulate(time_horizon, init_pos, init_speed, save, save_path, save_vel, save
         ego_vehicle = world.try_spawn_actor(ego_blueprint, ego_spawn_point) # 78
         print(ego_vehicle)
 
-        # set initial speed
-        # ego_vehicle.set_target_velocity(carla.Vector3D(x=init_speed, y=0.0, z=0.0))
-
         spectator = world.get_spectator()
         transform = carla.Transform(ego_vehicle.get_transform().transform(carla.Location(x=-4,z=2.5)),ego_vehicle.get_transform().rotation)
-        # transform = carla.Transform(ego_vehicle.get_transform().transform(carla.Location(x=150,y=10,z=5)),ego_vehicle.get_transform().rotation)
         spectator.set_transform(transform)
 
         actor_list.append(ego_vehicle)
@@ -304,7 +279,6 @@ def simulate(time_horizon, init_pos, init_speed, save, save_path, save_vel, save
         blueprint.set_attribute('image_size_y', f'{IM_HEIGHT}')
         blueprint.set_attribute('fov', '110')
 
-
         # adjust sensor to be above vehicle
         spawn_point = carla.Transform(carla.Location(x=2.5, z=10.0), carla.Rotation(pitch=-90))
 
@@ -317,7 +291,6 @@ def simulate(time_horizon, init_pos, init_speed, save, save_path, save_vel, save
         actor_list.append(sensor)
 
         print("start pid")
-        # control = carla.VehicleControl()
         main_control(ego_vehicle, world, image_queue, spawn_points, init_pos, init_speed, save_time, in_sight, emergency_activate, num_walker, save_file, time_horizon=time_horizon)
         
     finally:

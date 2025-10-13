@@ -21,16 +21,9 @@ except IndexError:
     pass
 import carla
 
-import random
-import time
-import numpy as np
-import cv2
 # import seaborn as sns
-from statistics import mean
-import pandas as pd
 from tqdm import tqdm
 
-import pid_control as carlaPid
 from risk_calc import count_words
 
 def average_time(ticks):
@@ -195,8 +188,7 @@ def create_transfuser_control(initial_state, N):
 
 def main():
     initial_state = [(-98,5),(-98,2),(-68,6),(-68,3),(-38,5),(-38,3)]
-    # tolerance = [0.05, 0.10, 0.15, 0.20]
-    tolerance = [0.05, 0.10]
+    tolerance = [0.05, 0.10, 0.15, 0.20]
     N = 50
 
     create_safe_control(initial_state, tolerance, N)

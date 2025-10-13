@@ -6,9 +6,6 @@ import matplotlib.pyplot as plt
 import argparse
 import csv
 
-# export PYTHONPATH=$PYTHONPATH:/home/tongyaoj/Documents/carla9.10/PythonAPI/carla/dist/carla-0.9.10-py3.7-linux-x86_64.egg
-
-
 sys.path.append(os.path.abspath('../carla/agents/navigation'))
 import controller
   
@@ -29,14 +26,10 @@ import time
 import numpy as np
 import cv2
 
-import pid_control as carlaPid
-from risk_calc import count_words
-
 IM_WIDTH = 640
 IM_HEIGHT = 480
 
 u_stats = []
-# brake = []
 velocity_stats = []
 position_stats = []
 safety_probability = []
@@ -64,14 +57,6 @@ def spawn_walker(world, ego_vehicle, init_pos, walker_id):
         loc.x += 82.0 - init_pos + 0.1
     loc.y += 12.0 + walker_id / 2
     loc.z += 1.0
-    # if walker_id == 0:
-    #     loc.x += 82.0 - init_pos
-    #     loc.y += 12.0
-    #     loc.z += 1.0
-    # else:
-    #     loc.x += 82.0 - init_pos
-    #     loc.y += 12.0 + walker_id / 2
-    #     loc.z += 1.0
     spawn_point.location = loc    
     walker = world.spawn_actor(walker_bp, spawn_point)
     curr_walkers.append(walker)
@@ -84,7 +69,6 @@ def spawn_occlusion(world, ego_vehicle, init_pos):
     loc = ego_vehicle.get_location()
     loc.x += 75.0 - init_pos
     loc.y += 5.0
-    # loc.y += 7.0
     loc.z += 1.0
     spawn_point.location = loc
     truck = world.spawn_actor(truck_bp, spawn_point)
@@ -193,7 +177,7 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
     
     # spawn walker and occlusion
     for walker_id in range(num_walker):
-        spawn_walker(world, ego_vehicle, init_pos, in_sight, walker_id)
+        spawn_walker(world, ego_vehicle, init_pos, walker_id)
 
     occlusion = spawn_occlusion(world, ego_vehicle, init_pos)
     occlusion_dim = occlusion.bounding_box.extent
@@ -211,8 +195,6 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
             v = float(row[1])
             F = float(row[2])
             lookup_table[(x, v)] = F
-            # if v == 1:
-            #     lookup_table[(x, 0)] = 1.0
 
     tick_count = 0
     spawned = np.zeros(num_walker) # boolean to check if the nth walker is spawned
@@ -277,9 +259,7 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
                     else:
                         # print(pos, current_speed, tick_count)
                         control = carla.VehicleControl(throttle=0.0, brake=0.05)
-                    
                 elif current_speed < target_speed:
-                    # print(current_speed, target_speed)
                     control = carla.VehicleControl(throttle=0.4, brake=0.0)
                 else:
                     if current_speed > target_speed + 0.2:

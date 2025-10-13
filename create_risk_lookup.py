@@ -6,11 +6,6 @@ import matplotlib.pyplot as plt
 import argparse
 import csv
 
-# export PYTHONPATH=$PYTHONPATH:/home/tongyaoj/Documents/carla9.10/PythonAPI/carla/dist/carla-0.9.10-py3.7-linux-x86_64.egg
-
-sys.path.append(os.path.abspath('../carla/agents/navigation'))
-import controller
-  
 # reset sys.path
 sys.path = sys.path[:-1]
 
@@ -23,15 +18,9 @@ except IndexError:
     pass
 import carla
 
-import random
-import time
 import numpy as np
-import cv2
-import seaborn as sns
-import pandas as pd
 from tqdm import tqdm
 
-import pid_control as carlaPid
 from risk_calc import count_words
 
 def create(xmin, xmax, xdelta, vmin, vmax, vdelta, time_horizon, N, file_id):

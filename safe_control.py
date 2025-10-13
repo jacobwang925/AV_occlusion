@@ -8,7 +8,6 @@ import csv
 
 # export PYTHONPATH=$PYTHONPATH:/home/tongyaoj/Documents/carla9.10/PythonAPI/carla/dist/carla-0.9.10-py3.7-linux-x86_64.egg
 
-
 sys.path.append(os.path.abspath('../carla/agents/navigation'))
 import controller
   
@@ -29,14 +28,12 @@ import time
 import numpy as np
 import cv2
 
-import pid_control as carlaPid
 from risk_calc import count_words
 
 IM_WIDTH = 640
 IM_HEIGHT = 480
 
 u_stats = []
-# brake = []
 velocity_stats = []
 velocity_y = []
 position_stats = []
@@ -67,14 +64,6 @@ def spawn_walker(world, ego_vehicle, init_pos, walker_id):
         loc.x += 82.0 - init_pos + 0.1
     loc.y += 12.0 + walker_id / 2
     loc.z += 1.0
-    # if walker_id == 0:
-    #     loc.x += 82.0 - init_pos
-    #     loc.y += 12.0
-    #     loc.z += 1.0
-    # else:
-    #     loc.x += 82.0 - init_pos
-    #     loc.y += 12.0 + walker_id / 2
-    #     loc.z += 1.0
     spawn_point.location = loc    
     walker = world.spawn_actor(walker_bp, spawn_point)
     curr_walkers.append(walker)
@@ -87,7 +76,6 @@ def spawn_occlusion(world, ego_vehicle, init_pos):
     loc = ego_vehicle.get_location()
     loc.x += 75.0 - init_pos
     loc.y += 5.0
-    # loc.y += 7.0
     loc.z += 1.0
     spawn_point.location = loc
     truck = world.spawn_actor(truck_bp, spawn_point)
@@ -186,30 +174,16 @@ def display_stats():
     plt.show()   
 
 def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, init_speed, alpha, epsilon, emergency_activate, num_walker, save_time):
-    # parameters
-    # N = 3
-    # epsilon = 1e-3 # =================================
-
-    # spawn standard PID controller
     # spawn a vehicle pid controller
-    # args_longitudinal = {
-    #     'K_P': 0.05,
-    #     'K_D': 0.1,
-    #     'K_I': 0.05,
-    #     'dt': 0.003
-    # }
+    args_longitudinal = {
+        'K_P': 0.05,
+        'K_D': 0.1,
+        'K_I': 0.05,
+        'dt': 0.003
+    }
     target_speed = 5 #m/s
 
-    # =========== PID ============
-    # args_longitudinal = {
-    #     'K_P': 0.04,
-    #     'K_D': 0.03,
-    #     'K_I': 0.01,
-    #     'dt': 0.001
-    # }
-    # target_speed = 4.5 # m/s
-
-    # ego_control = controller.PIDLongitudinalController(ego_vehicle, **args_longitudinal)
+    ego_control = controller.PIDLongitudinalController(ego_vehicle, **args_longitudinal)
 
     # random spawn walker
     # normal distribution
@@ -223,9 +197,6 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
         std_interval = 50
         t_max_interval = 300
         if i == 0:
-            # if in_sight == True:
-            #     spawn_ticks[i] = 1
-            # else:
             while True:
                 spawn_ticks[i] = round(min(np.random.normal(mean_first_walker, std_first_walker), t_max_first_walker))
                 if spawn_ticks[i] > 0:
@@ -236,18 +207,7 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
                 if interval > 0:
                     break
             spawn_ticks[i] = interval + spawn_ticks[i-1]
-    # print(spawn_ticks)
-	
-    # poisson distribution
-    # poisson_interval = 130
-    # spawn_ticks = np.zeros(num_walker)
-    # for i in range(num_walker):
-    #     if i == 0:
-    #         spawn_ticks[i] = min(np.random.poisson(48, 1), 136)
-    #     else:
-    #         spawn_ticks[i] = min(np.random.poisson(poisson_interval, 1), poisson_interval*3) + spawn_ticks[i-1]
-
-    # print("start walker at tick:", spawn_tick)
+    
     for walker_id in range(num_walker):
         spawn_walker(world, ego_vehicle, init_pos, walker_id)
 
@@ -259,7 +219,6 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
 
     # pull in risk lookup table
     lookup_table = {}
-    # with open('lookup_table_processed.csv', 'r', encoding='utf-8-sig') as file:
     with open('risk_lookup_table.csv', 'r', encoding='utf-8-sig') as file:
         reader = csv.reader(file)
         for row in reader:
@@ -272,9 +231,6 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
     spawned = np.zeros(num_walker) # boolean to check if the nth walker is spawned
 
     time_horizon = 10000
-    
-    # =============
-    # print(ego_vehicle.get_physics_control())
     
     while tick_count < time_horizon:
         tick_count += 1
@@ -293,18 +249,6 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
         # get current state of ego vehicle
         pos = ego_vehicle.get_location().x - spawn_points[1].location.x + init_pos
         speed = ego_vehicle.get_velocity().x
-        # if pos > 75.0 and pos < 76.0:
-            # print(tick_count)
-
-        # print("SIMULATING...")
-        
-        # # calculate risk
-        # for i in range(N):
-        #     carlaPid.simulate(time_horizon, pos, speed, False, None, False, "F.txt")
-        # Fcounts = count_words('F.txt', ['True', 'False'])
-        # F = Fcounts['True'] / N
-        # control = None
-        # print("DONE SIMULATING")
 
         key, F = find_closest_table_entry(pos, speed, lookup_table)
         key_x.append(key[0])
@@ -314,7 +258,6 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
         velocity_y.append(ego_vehicle.get_velocity().y)
         position_stats.append(pos)
         safety_probability.append(F)
-        # print(f"pos: {pos}, speed: {speed}, safety probability: {F}, tick_count: {tick_count}")
 
         # emergency stop if sees pedestrian
         emergency_stop = False
@@ -330,37 +273,9 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
             u_stats.append(0)
             if emergency_stop: # and pos < 79.5: # haven't passed the intersection
                 if pos >= 79.4:
-                    # print("========", pos, tick_count)
                     control = carla.VehicleControl(throttle=0.4, brake=0.0)
                 else:
-                    # print("========", tick_count)
                     control = carla.VehicleControl(throttle=0.0, brake=0.05)
-                # print(pos, current_speed)
-                # if current_speed < 1e-4 and pos >= 79.4: # 80.0:
-                #     print("hihi")
-                #     control = carla.VehicleControl(throttle=0.4, brake=0.0)
-                # # if current_speed <= 0.05:
-                # #     control = carla.VehicleControl(throttle=0.0, brake=0.0)
-                # else:
-                #     # print(tick_count, ego_vehicle.get_acceleration())
-                #     control = carla.VehicleControl(throttle=0.0, brake=0.05)
-
-            # nominal control
-            # PID
-            # elif current_speed < target_speed:
-            #     control = carla.VehicleControl(throttle=min(accel, 1.0), brake=0.0)
-            #     brake.append(0)
-            # else:
-            #     if tick_count < 7 * (init_speed - target_speed):
-            #         control = carla.VehicleControl(throttle=0.0, brake=0.3)
-            #     else:
-            #         control = carla.VehicleControl(throttle=0.0, brake=0.0)
-            #     brake.append(0)
-
-            # throttle control
-            # else:
-            #     ego_vehicle.set_target_velocity(carla.Vector3D(x=target_speed, y=0.0, z=0.0))
-            #     control = None
             elif current_speed < target_speed:
                 # print(current_speed, target_speed)
                 control = carla.VehicleControl(throttle=0.4, brake=0.0)
@@ -373,17 +288,12 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
                     control = carla.VehicleControl(throttle=0.0, brake=0.0)
 
         else:   # safe controller
-            # print("SIMULATING (GRADIENT)...")
-            # print("safe control tick: ", tick_count)
-            # print(key)
-            # print(F,pos,current_speed)
             # find gradient
             dF_dv = 0
             for delta_v in {1, 1.5, 2}:
                 _, Fplus = find_closest_table_entry(pos, speed+delta_v, lookup_table)
                 _, Fminus = find_closest_table_entry(pos, speed-delta_v, lookup_table)
                 dF_dv_temp = (Fplus - Fminus) / (2 * delta_v)
-                # print(Fplus, Fminus)
                 if dF_dv_temp != 0:
                     dF_dv = dF_dv_temp
                     break
@@ -391,53 +301,19 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
             if dF_dv == 0:
                 dF_dv = -0.1 # default value
 
-            # print("dF_dv: ", dF_dv)
-            # print("pos: ", pos)
-            # print("v: ", speed)
-
-
-            # for i in range(N):
-            #     carlaPid.simulate(time_horizon, pos-delta_x, speed, False, None, True, "Fminus.txt")
-            # Fminus_counts = count_words('Fminus.txt', ['True', 'False'])
-            # Fminus = Fminus_counts['True'] / N
-
-            # for i in range(N):
-            #     carlaPid.simulate(time_horizon, pos+delta_x, speed, False, None, True, "Fplus.txt")
-            # Fplus_counts = count_words('Fplus.txt', ['True', 'False'])
-            # Fplus = Fplus_counts['True'] / N
-
-            # _, Fplus = find_closest_table_entry(pos+delta_x, speed, lookup_table)
-            # _, Fminus = find_closest_table_entry(pos-delta_x, speed, lookup_table)
-
-            # print("DONE SIMULATING (GRADIENT)")
-
-            # safe control
-            # dF_dx = (Fplus - Fminus) / (2 * delta_x) # maybe 0 due to small number of trials
-            # print(dF_dx) # ================ <0 in general ==================
-
             # calculate control
             delta_t = settings.fixed_delta_seconds
             u = safe_control_calc(ego_vehicle, dF_dv, delta_t, F, epsilon, alpha)
-            # print("u: ")
-            # print(u)
             
             # if u is positive, apply throttle
             if u > 0:
                 u_stats.append(min(3*u, 1.0))
                 control = carla.VehicleControl(throttle=3*u, brake=0.0)
-                # control = carla.VehicleControl(throttle=max(0.7,3*u), brake=0.0)
-                # if 3*u > 0.7:
-                #     u_stats.append(min(3*u,0.7))
-                # else:
-                #     u_stats.append(1)
+                u_stats.append(min(3*u,1))
 
             else:
-                # print("abs(u):")
-                # print(abs(u))
-                # brake.append(abs(u))
                 u_stats.append(max(u, -1.0))
                 control = carla.VehicleControl(throttle=0.0, brake=abs(u))
-            
 
         if control is not None:
             ego_vehicle.apply_control(control)
@@ -455,7 +331,6 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
                 # set ego vehicle to stop
                 control = carla.VehicleControl(throttle=0.0, brake=1.0)
                 ego_vehicle.apply_control(control)
-                # display_stats()
                 return
 
         # check if vehicle is at the end of the road
@@ -508,7 +383,6 @@ def main(save, save_pos, save_prob, save_brake, save_trajectory, save_key, save_
 
         spectator = world.get_spectator()
         transform = carla.Transform(ego_vehicle.get_transform().transform(carla.Location(x=-4,z=2.5)),ego_vehicle.get_transform().rotation)
-        # transform = carla.Transform(ego_vehicle.get_transform().transform(carla.Location(x=150,y=10,z=5)),ego_vehicle.get_transform().rotation)
         spectator.set_transform(transform)
 
         actor_list.append(ego_vehicle)
@@ -521,7 +395,6 @@ def main(save, save_pos, save_prob, save_brake, save_trajectory, save_key, save_
         blueprint.set_attribute('image_size_x', f'{IM_WIDTH}')
         blueprint.set_attribute('image_size_y', f'{IM_HEIGHT}')
         blueprint.set_attribute('fov', '110')
-
 
         # adjust sensor to be above vehicle
         spawn_point = carla.Transform(carla.Location(x=2.5, z=10.0), carla.Rotation(pitch=-90))
