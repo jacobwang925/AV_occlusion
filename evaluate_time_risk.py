@@ -1,36 +1,14 @@
-import glob
 import os
-import sys
-import queue
-import matplotlib.pyplot as plt
-import argparse
 import csv
-
-sys.path.append(os.path.abspath('../carla/agents/navigation'))
-import controller
-  
-# reset sys.path
-sys.path = sys.path[:-1]
-
-try:
-    sys.path.append(glob.glob('../carla/dist/carla-*%d.%d-%s.egg' % (
-        sys.version_info.major,
-        sys.version_info.minor,
-        'win-amd64' if os.name == 'nt' else 'linux-x86_64'))[0])
-except IndexError:
-    pass
-import carla
-
-# import seaborn as sns
 from tqdm import tqdm
 
 from risk_calc import count_words
 
 def average_time(ticks):
-    sum = 0
-    for i in range(len(ticks)):
-        sum = sum + ticks[i][0]
-    return (sum/len(ticks))
+    total = 0
+    for tick in ticks:
+        total += tick[0]
+    return total / len(ticks)
 
 def create_safe_control(initial_state, tolerance, N):
     safe_control_table = {}

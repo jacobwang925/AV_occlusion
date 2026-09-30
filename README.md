@@ -30,10 +30,12 @@ which will run the simulation with the default initial speed, and initial positi
 ```sh
  python cruise_control.py --init_pos=x --init_speed=v
 ```
-Single runs can save frames to generate videos as well, with the additional flags below:
+Single runs can save frames to generate videos by including the `--save` flag:
 ```sh
- python cruise_control.py --save=True
+ python cruise_control.py --save
 ```
+
+Boolean flags such as `--save`, `--save_time`, and `--save_trajectory` are false when omitted and true when present. Emergency stopping remains enabled by default; pass `--no-emergency` to disable it on controllers that support that option.
 
 To get a lookup table for safety probability, set your desired range of initial position, range of initial speed, discretization steps, number of trials for each state, and run the following
 ```sh
@@ -58,9 +60,9 @@ To visualize the risk lookup table, please refer to the **visualization and eval
 
 ## Safe Control
 
-The risk lookup table we used to run the following experiments is uploaded here as 'raw_risk_lookup_table.csv', where we preprocessed the data saved from the previous section. We calculated the safety probability of each state, and only kept the value of initial position, initial speed, safety probability without column names. Create a new folder called 'tables' and save the previous raw tables into this folder, and run
+The repository includes the processed lookup table as `risk_lookup_table.csv`. To combine raw lookup tables, create a folder named `tables`, place the raw CSV files in it, and run
 ```sh
- python lookup_processing.py
+ python lookup_postprocessing.py
 ```
 
 Launch a terminal in the root of the code and implement safe control algorithm by running
@@ -89,18 +91,18 @@ For **Figure 3**, run the following which will save the plot in 'table_trajector
 ```sh
  python plot_lookup.py
 ```
-For **Figure 4**, first run 6 control methods (PID, risk-based, Transfuser, oa_moc, planning_based, and proposed) to save their trajectories by
+For **Figure 4**, first run 6 control methods (PID, risk-based, TransFuser, OA-MPC, planning-based, and proposed) to save their trajectories by
 ```sh
- python pid_control.py --init_pos=-38 --init_speed=0 --save_trajectory=True
- python risk_based_control.py --init_pos=-38 --init_speed=0 --epsilon=0.02 --save_trajectory=True
- python oa_mpc_control.py --init_pos=-38 --init_speed=0 --save_trajectory=True
- python planning_based_control.py --init_pos=-38 --init_speed=0 --save_trajectory=True
- python safe_control.py --init_pos=-38 --init_speed=0 --epsilon=0.05 --alpha=0.2 --save_trajectory=True
+ python pid_control.py --init_pos=-38 --init_speed=0 --save_trajectory
+ python risk_based_control.py --init_pos=-38 --init_speed=0 --epsilon=0.02 --save_trajectory
+ python oa_mpc_control.py --init_pos=-38 --init_speed=0 --save_trajectory
+ python planning_based_control.py --init_pos=-38 --init_speed=0 --save_trajectory
+ python safe_control.py --init_pos=-38 --init_speed=0 --epsilon=0.05 --alpha=0.2 --save_trajectory
 ```
 and launch another terminal and go to the root of 'transfuser_control.py'
 ```sh
  conda activate tfuse-1
- python transfuser_control.py --init_pos=-38 --init_speed=0 --save_trajectory=True
+ python transfuser_control.py --init_pos=-38 --init_speed=0 --save_trajectory
 ```
 (Notes: we use initial position as -38m in the simulation where the pedestrians are at 82m. But we transfer the initial position to -120m in the paper, as we set the pedestrian as the origin.)
 And then use the trajectory obtained to produce the velocity vs time or velocity vs distance plot by
@@ -111,9 +113,9 @@ And then use the trajectory obtained to produce the velocity vs time or velocity
 we also uploaded our experiment trajectory results (text files) in this folder.
 **Figure 1** and **Figure 2** source files are 'intersection_3D_figure.pptx' and 'carla_setup.pptx'.
 
-To reproduce **Table II**, set the initial states and number of trials, run
+To reproduce **Table II**, set the initial states and number of trials in `evaluate_time_risk.py`, then run
 ```sh
- python create_time_risk.py
+ python evaluate_time_risk.py
 ```
 which will save 4 files 'safe_control_risk.csv', 'cruise_control_risk.csv', 'risk_control_risk', 'transfuser_control_risk.csv', with columns 'init_pos', 'init_speed', 'tolerance', 'total_safe', 'total_unsafe', 'safety_probability', and 'average_time_horizon'.
 

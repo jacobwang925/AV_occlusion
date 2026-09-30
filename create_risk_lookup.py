@@ -1,13 +1,8 @@
 import glob
 import os
 import sys
-import queue
-import matplotlib.pyplot as plt
 import argparse
 import csv
-
-# reset sys.path
-sys.path = sys.path[:-1]
 
 try:
     sys.path.append(glob.glob('../carla/dist/carla-*%d.%d-%s.egg' % (
@@ -16,8 +11,6 @@ try:
         'win-amd64' if os.name == 'nt' else 'linux-x86_64'))[0])
 except IndexError:
     pass
-import carla
-
 import numpy as np
 from tqdm import tqdm
 
@@ -40,7 +33,6 @@ def create(xmin, xmax, xdelta, vmin, vmax, vdelta, time_horizon, N, file_id):
                 print(cmd)
                 os.system(cmd)
                 counts = count_words("lookup.txt", ['safe', 'unsafe'])
-                # total = sum(counts.values())
                 if n == 0:
                     lookup[(x, v)] = [counts['safe'],counts['unsafe']]
                 else:

@@ -1,10 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
-from scipy.signal import savgol_filter
-
-import pykalman
-from pykalman import KalmanFilter
 
 from scipy.interpolate import interp1d
 
@@ -50,8 +45,6 @@ def smooth_by_boundary(stats, window_size):
         else:
             smoothed_stats[i] = window_mean
 
-    # zero_pad = np.zeros((1,window_size))
-    # output = np.concatenate(smoothed_stats, zero_pad[0])
     
     return smoothed_stats
 
@@ -69,8 +62,6 @@ def plot_stats(safe_v, pid_v, transfuser_v, risk_v):
     with open(safe_v, 'r') as file:
         safe_v_stats = [list(map(float, line.split())) for line in file]
 
-    # with open(safe_u, 'r') as file:
-    #     safe_u_stats = [list(map(float, line.split())) for line in file]
     
     with open(pid_v, 'r') as file:
         pid_v_stats = [list(map(float, line.split())) for line in file]
@@ -83,7 +74,7 @@ def plot_stats(safe_v, pid_v, transfuser_v, risk_v):
     
     
 
-    ## velocity
+    # Velocity
     fig, ax1 = plt.subplots()
 
     # PID
@@ -122,20 +113,7 @@ def plot_stats(safe_v, pid_v, transfuser_v, risk_v):
     ax1.set_ylim(-0.1,7.5)
     ax1.tick_params(axis='y')
 
-    # # control
-    # ax2 = ax1.twinx()
-    # ax2.plot(safe_u_stats[0], color='tab:orange', label='brake command (proposed)')
-    # ax2.set_ylabel('brake', fontsize=14)
-    # ax2.tick_params(labelsize=12)
-    # ax2.set_ylim(-1,2)
-    # ax2.tick_params(axis='y')
-
-
     # legend & label
-    # handles1, labels1 = ax1.get_legend_handles_labels()
-    # handles2, labels2 = ax2.get_legend_handles_labels()
-    # handles = handles1 + handles2
-    # labels = labels1 + labels2
 
     handles, labels = plt.gca().get_legend_handles_labels()
     order = [3, 2, 1, 0]
@@ -145,7 +123,7 @@ def plot_stats(safe_v, pid_v, transfuser_v, risk_v):
     delta_t = 1 * 10 / 0.05
     t_label = np.arange(0, len(transfuser_v_stats[0]), delta_t)
 
-    t_tick_label = [] # ["%.2f" % t for t in t_label]
+    t_tick_label = []
     for t in t_label:
         t_tick_label.append(str(int(t*0.05)))
     ax1.set_xticks(t_label)

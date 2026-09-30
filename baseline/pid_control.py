@@ -185,7 +185,6 @@ def main_control(ego_vehicle, world, image_queue, spawn_points, init_pos, init_s
 
     # pull in risk lookup table
     lookup_table = {}
-    # with open('lookup_table_processed.csv', 'r', encoding='utf-8-sig') as file:
     with open('risk_lookup_table.csv', 'r', encoding='utf-8-sig') as file:
         reader = csv.reader(file)
         for row in reader:
@@ -193,8 +192,6 @@ def main_control(ego_vehicle, world, image_queue, spawn_points, init_pos, init_s
             v = float(row[1])
             F = float(row[2])
             lookup_table[(x, v)] = F
-            # if v == 1:
-            #     lookup_table[(x, 0)] = 1.0
 
     while tick_count < time_horizon:
         tick_count += 1
@@ -252,9 +249,6 @@ def main_control(ego_vehicle, world, image_queue, spawn_points, init_pos, init_s
             if ego_vehicle.get_location().distance(w.get_location()) < 3.0:
                 print("collision")
                 print("tick: ", tick_count)
-                # if ego_vehicle.get_location().x > spawn_points[1].location.x + 82.0 - init_pos:
-                    # safe = True
-                safe = False
                 # append safe to safe document
                 print('safe:', False)
                 with open(save_file, 'a') as f:
@@ -347,19 +341,12 @@ def simulate(time_horizon, init_pos, init_speed, save, save_path, save_vel, save
         if save_vel:
             # graph velocity stats
             plt.plot(velocity_stats)
-            # plt.plot(velocity_y)
             plt.ylabel('velocity')
             plt.xlabel('time')
             plt.savefig('velocity_stats_' + str(int(time.time())) + '.png')
             plt.clf()
             print('velocity stats saved')
 
-            # # plot predicted safety probability
-            # plt.plot(safety_probability)
-            # # plt.plot(velocity_y)
-            # plt.ylabel('velocity')
-            # plt.xlabel('time')
-            # plt.savefig('F_stats_' + str(int(time.time())) + '.png')
 
         if save_trajectory:
             # save stats in txt file
@@ -397,15 +384,16 @@ def main():
     parser.add_argument('--time_horizon', type=float, default=100000, help='Time horizon for simulation')
     parser.add_argument('--init_pos', type=float, default=0, help='Initial position of vehicle')
     parser.add_argument('--init_speed', type=float, default=0, help='Initial speed of vehicle')
-    parser.add_argument('--save', type=bool, default=False, help='Save frames')
+    parser.add_argument('--save', action='store_true', help='Save frames')
     parser.add_argument('--save_path', type=str, default='frames/', help='Path to save frames')
-    parser.add_argument('--save_vel', type=bool, default=False, help='Save velocity stats')
+    parser.add_argument('--save_vel', action='store_true', help='Save velocity stats')
     parser.add_argument('--save_file', type=str, default='safe.txt', help='File to save safe status')
-    parser.add_argument('--in_sight', type=bool, default=False, help='The walker is spawned at the intersection')
-    parser.add_argument('--emergency_activate', type=bool, default=True, help='Emergency stop controller is not activated')
+    parser.add_argument('--in_sight', action='store_true', help='Spawn the walker at the intersection')
+    parser.add_argument('--emergency_activate', action='store_true', default=True, help=argparse.SUPPRESS)
+    parser.add_argument('--no-emergency', dest='emergency_activate', action='store_false', help='Disable the emergency-stop controller')
     parser.add_argument('--num_walker', type=int, default=8, help='Number of walker spawned')
-    parser.add_argument('--save_time', type=bool, default=False, help='Save time horizon')
-    parser.add_argument('--save_trajectory', type=bool, default=False, help='Save stats trajectory')
+    parser.add_argument('--save_time', action='store_true', help='Save time horizon')
+    parser.add_argument('--save_trajectory', action='store_true', help='Save trajectory statistics')
 
     args = parser.parse_args()
     
@@ -421,7 +409,7 @@ def main():
     emergency_activate = args.emergency_activate
     num_walker = args.num_walker
     save_time = args.save_time
-    save_trajerictory = args.save_trajectory
+    save_trajectory = args.save_trajectory
 
     simulate(time_horizon, init_pos, init_speed, save, save_path, save_vel, save_time, in_sight, emergency_activate, num_walker, save_trajectory, save_file)
 

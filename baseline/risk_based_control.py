@@ -6,12 +6,6 @@ import matplotlib.pyplot as plt
 import argparse
 import csv
 
-sys.path.append(os.path.abspath('../carla/agents/navigation'))
-import controller
-  
-# reset sys.path
-sys.path = sys.path[:-1]
-
 try:
     sys.path.append(glob.glob('../carla/dist/carla-*%d.%d-%s.egg' % (
         sys.version_info.major,
@@ -46,7 +40,6 @@ def process_img(image, world):
     return i3/255.0
 
 def spawn_walker(world, ego_vehicle, init_pos, walker_id):
-    # print(walker_id)
     walker_bp = random.choice(world.get_blueprint_library().filter('walker.pedestrian.*'))
     # create spawn point at intersection walking left to right
     spawn_point = carla.Transform()
@@ -187,7 +180,6 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
 
     # pull in risk lookup table
     lookup_table = {}
-    # with open('lookup_table_processed.csv', 'r', encoding='utf-8-sig') as file:
     with open('risk_lookup_table.csv', 'r', encoding='utf-8-sig') as file:
         reader = csv.reader(file)
         for row in reader:
@@ -201,8 +193,6 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
 
     time_horizon = 100000
     
-    # constant brake control
-    # brake = False
     tick_record = []
 
     while tick_count < time_horizon:
@@ -241,12 +231,9 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
         current_speed = ego_vehicle.get_velocity().x
         if F > 1 - epsilon or pos > 75.0:
             if tick_record != []:
-            # if brake:
                 if tick_count > tick_record[0] + 5:
-                # if current_speed < 0.01:
                     control = carla.VehicleControl(throttle=0.4, brake=0.0)
                     u_stats.append(0)
-                    # brake = False
                     tick_record = []
                 else:
                     control = carla.VehicleControl(throttle=0.0, brake=0.1)
@@ -257,7 +244,6 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
                     if pos >= 79.4: # haven't passed the intersection
                         control = carla.VehicleControl(throttle=0.4, brake=0.0)
                     else:
-                        # print(pos, current_speed, tick_count)
                         control = carla.VehicleControl(throttle=0.0, brake=0.05)
                 elif current_speed < target_speed:
                     control = carla.VehicleControl(throttle=0.4, brake=0.0)
@@ -268,7 +254,6 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
                         control = carla.VehicleControl(throttle=0.0, brake=0.0)
 
         else:
-            # brake = True
             tick_record.append(tick_count)
             u_stats.append(0.1)
             control = carla.VehicleControl(throttle=0.0, brake=0.1)
@@ -286,7 +271,6 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
                 # set ego vehicle to stop
                 control = carla.VehicleControl(throttle=0.0, brake=1.0)
                 ego_vehicle.apply_control(control)
-                # display_stats()
                 return
 
         # check if vehicle is at the end of the road
@@ -299,10 +283,8 @@ def safe_controller(ego_vehicle, world, image_queue, spawn_points, init_pos, ini
                         f.write(str(tick_count) + '\n')
             with open('safe_control.txt', 'a') as f:
                 f.write('safe\n')
-            # print('safe:', True, tick_count)
             return
 
-    # display_stats()
     plt.title('Velocity on y axis')
     plt.show()
 
@@ -324,7 +306,6 @@ def main(save, save_pos, save_prob, save_brake, save_trajectory, save_time, init
         blueprint_library = world.get_blueprint_library()
 
         spawn_points = world.get_map().get_spawn_points()  
-        # print(world.get_map())
 
         ego_blueprint = blueprint_library.filter('model3')[0]
 
@@ -338,7 +319,6 @@ def main(save, save_pos, save_prob, save_brake, save_trajectory, save_time, init
 
         spectator = world.get_spectator()
         transform = carla.Transform(ego_vehicle.get_transform().transform(carla.Location(x=-4,z=2.5)),ego_vehicle.get_transform().rotation)
-        # transform = carla.Transform(ego_vehicle.get_transform().transform(carla.Location(x=150,y=10,z=5)),ego_vehicle.get_transform().rotation)
         spectator.set_transform(transform)
 
         actor_list.append(ego_vehicle)
@@ -438,20 +418,21 @@ def main(save, save_pos, save_prob, save_brake, save_trajectory, save_time, init
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--save', type=bool, default=False, help='Save frames')
+    parser.add_argument('--save', action='store_true', help='Save frames')
     parser.add_argument('--save_path', type=str, default='frames/', help='Path to save frames')
-    parser.add_argument('--save_pos', type=bool, default=False, help='Save velocity, brake, and position stats')
-    parser.add_argument('--save_brake', type=bool, default=False, help='Save brake stats')
-    parser.add_argument('--save_prob', type=bool, default=False, help='Save safety probability')
+    parser.add_argument('--save_pos', action='store_true', help='Save velocity, brake, and position statistics')
+    parser.add_argument('--save_brake', action='store_true', help='Save brake statistics')
+    parser.add_argument('--save_prob', action='store_true', help='Save safety probability')
     parser.add_argument('--init_pos', type=float, default=0, help='Initial position of vehicle')
     parser.add_argument('--init_speed', type=float, default=0, help='Initial speed of vehicle')
     parser.add_argument('--alpha', type=float, default=0.2, help='Safe controller parameter')
     parser.add_argument('--epsilon', type=float, default=0.05, help='Safety tolerance')
-    parser.add_argument('--emergency_activate', type=bool, default=True, help='Emergency stop controller is activated')
+    parser.add_argument('--emergency_activate', action='store_true', default=True, help=argparse.SUPPRESS)
+    parser.add_argument('--no-emergency', dest='emergency_activate', action='store_false', help='Disable the emergency-stop controller')
     parser.add_argument('--num_walker', type=int, default=8, help='Number of walker spawned')
     parser.add_argument('--save_file', type=str, default='safe_control.txt', help='File to save safe status')
-    parser.add_argument('--save_trajectory', type=bool, default=False, help='Save brake stats')
-    parser.add_argument('--save_time', type=bool, default=False, help='Save time horizon')
+    parser.add_argument('--save_trajectory', action='store_true', help='Save trajectory statistics')
+    parser.add_argument('--save_time', action='store_true', help='Save time horizon')
 
     args = parser.parse_args()
     save = args.save

@@ -5,9 +5,6 @@ import queue
 import matplotlib.pyplot as plt
 import argparse
   
-# reset sys.path
-sys.path = sys.path[:-1]
-
 try:
     sys.path.append(glob.glob('../carla/dist/carla-*%d.%d-%s.egg' % (
         sys.version_info.major,
@@ -213,7 +210,6 @@ def main_control(ego_vehicle, world, image_queue, spawn_points, init_pos, init_s
             if ego_vehicle.get_location().distance(w.get_location()) < 3.0:
                 print("collision")
                 print("tick: ", tick_count)
-                safe = False
                 # append safe to safe document
                 print('safe:', False)
                 with open(save_file, 'a') as f:
@@ -305,7 +301,6 @@ def simulate(time_horizon, init_pos, init_speed, save, save_path, save_vel, save
         if save_vel:
             # graph velocity stats
             plt.plot(velocity_stats)
-            # plt.plot(velocity_y)
             plt.ylabel('velocity')
             plt.xlabel('time')
             plt.savefig('velocity_stats_' + str(int(time.time())) + '.png')
@@ -329,14 +324,15 @@ def main():
     parser.add_argument('--time_horizon', type=float, default=100000, help='Time horizon for simulation')
     parser.add_argument('--init_pos', type=float, default=0, help='Initial position of vehicle')
     parser.add_argument('--init_speed', type=float, default=0, help='Initial speed of vehicle')
-    parser.add_argument('--save', type=bool, default=False, help='Save frames')
+    parser.add_argument('--save', action='store_true', help='Save frames')
     parser.add_argument('--save_path', type=str, default='frames/', help='Path to save frames')
-    parser.add_argument('--save_vel', type=bool, default=False, help='Save velocity stats')
+    parser.add_argument('--save_vel', action='store_true', help='Save velocity stats')
     parser.add_argument('--save_file', type=str, default='cruise_control.txt', help='File to save safe status')
-    parser.add_argument('--in_sight', type=bool, default=False, help='The walker is spawned at the intersection')
-    parser.add_argument('--emergency_activate', type=bool, default=True, help='Emergency stop controller is not activated')
+    parser.add_argument('--in_sight', action='store_true', help='Spawn the walker at the intersection')
+    parser.add_argument('--emergency_activate', action='store_true', default=True, help=argparse.SUPPRESS)
+    parser.add_argument('--no-emergency', dest='emergency_activate', action='store_false', help='Disable the emergency-stop controller')
     parser.add_argument('--num_walker', type=int, default=3, help='Number of walker spawned')
-    parser.add_argument('--save_time', type=bool, default=False, help='Save time horizon')
+    parser.add_argument('--save_time', action='store_true', help='Save time horizon')
 
     args = parser.parse_args()
     

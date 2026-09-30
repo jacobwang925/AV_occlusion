@@ -1,12 +1,4 @@
-import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
-from scipy.signal import savgol_filter
-
-import pykalman
-from pykalman import KalmanFilter
-
-from scipy.interpolate import interp1d
 
 
 # smoothing methods
@@ -108,7 +100,6 @@ def plot_stats(safe_v, safe_position, risk_v, risk_position, transfuser_v, trans
     order = [3, 2, 1, 0, 4]
     plt.legend([handles[i] for i in order], [labels[i] for i in order], ncol=2, loc='upper left', fontsize=10)
 
-    # plt.show()
     plt.savefig("velocity_distance.pdf", format="pdf", bbox_inches='tight')
     plt.clf()
 
@@ -124,4 +115,3 @@ if __name__ == '__main__':
     pid_pos = 'pid_pos.txt'
 
     plot_stats(safe_v, safe_position, risk_v, risk_position, transfuser_v, transfuser_position, pid_v, pid_pos)
-

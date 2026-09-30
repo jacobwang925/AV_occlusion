@@ -1,6 +1,3 @@
-import os
-import sys
-
 def count_words(filename, words):
     with open(filename, 'r') as file:
         text = file.read().lower()

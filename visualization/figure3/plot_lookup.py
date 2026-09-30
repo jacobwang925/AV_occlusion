@@ -23,7 +23,6 @@ def transformation_x(pos):
 def smooth_data(stats, window_size, cutoff_point=8):
     smoothed_stats = []
     half_window = window_size // 2
-    # cutoff_point = 8
     for i in range(cutoff_point):
         smoothed_stats.append(stats[i])
 
@@ -48,7 +47,6 @@ def plot_lookup_table(vmin, vmax, vdelta, xmin, xmax, xdelta, filename):
     init_speed = df['init_speed']
     safe = df['total_safe']
     unsafe = df['total_unsafe']
-    # F = df['safety_probability']
 
     df = df.astype(object)
     # prepare a dataframe for plot
@@ -68,7 +66,6 @@ def plot_lookup_table(vmin, vmax, vdelta, xmin, xmax, xdelta, filename):
     smoothed_lookup = gaussian_filter(lookup, sigma=0.7)
     
     # plot heatmap    
-    # ax = sns.heatmap(lookup, vmin=0.4, vmax=1) # with colorbar from 0.4 to 1
     ax = sns.heatmap(smoothed_lookup, vmin=0.4, vmax=1)
     # change the font size of color bar
     cbar = ax.collections[0].colorbar
@@ -145,7 +142,6 @@ def plot(vmin, vmax, vdelta, xmin, xmax, xdelta, filename):
 
     plt.ylabel('Initial Velocity (m/s)', fontsize=14)
     plt.xlabel('Initial Position (m)', fontsize=14)
-    # plt.show()
     plt.savefig("table_trajectory.pdf", format="pdf", bbox_inches='tight')
     plt.clf()
 

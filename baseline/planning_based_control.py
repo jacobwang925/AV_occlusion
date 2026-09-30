@@ -6,14 +6,6 @@ import matplotlib.pyplot as plt
 import argparse
 import csv
 
-# export PYTHONPATH=$PYTHONPATH:/home/plusai/Documents/carla9.10/PythonAPI/carla/dist/carla-0.9.10-py3.7-linux-x86_64.egg
-
-sys.path.append(os.path.abspath('../carla/agents/navigation'))
-import controller
-  
-# reset sys.path
-sys.path = sys.path[:-1]
-
 try:
     sys.path.append(glob.glob('../carla/dist/carla-*%d.%d-%s.egg' % (
         sys.version_info.major,
@@ -362,7 +354,6 @@ def main(save, save_pos, save_brake, save_trajectory, save_time, init_pos, init_
         if save_brake:
             # graph brake stats
             plt.plot(velocity_stats)
-            # plt.plot(u_stats)
             plt.ylabel('velocity & control')
             plt.xlabel('time')
             plt.savefig('brake_stats_' + str(int(time.time())) + '.png')
@@ -384,16 +375,16 @@ def main(save, save_pos, save_brake, save_trajectory, save_time, init_pos, init_
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--save', type=bool, default=False, help='Save frames')
+    parser.add_argument('--save', action='store_true', help='Save frames')
     parser.add_argument('--save_path', type=str, default='frames/', help='Path to save frames')
-    parser.add_argument('--save_pos', type=bool, default=False, help='Save velocity, brake, and position stats')
-    parser.add_argument('--save_brake', type=bool, default=False, help='Save brake stats')
+    parser.add_argument('--save_pos', action='store_true', help='Save velocity, brake, and position statistics')
+    parser.add_argument('--save_brake', action='store_true', help='Save brake statistics')
     parser.add_argument('--init_pos', type=float, default=0, help='Initial position of vehicle')
     parser.add_argument('--init_speed', type=float, default=0, help='Initial speed of vehicle')
     parser.add_argument('--num_walker', type=int, default=8, help='Number of walker spawned')
     parser.add_argument('--save_file', type=str, default='planning_control.txt', help='File to save safe status')
-    parser.add_argument('--save_trajectory', type=bool, default=False, help='Save brake stats')
-    parser.add_argument('--save_time', type=bool, default=False, help='Save time horizon')
+    parser.add_argument('--save_trajectory', action='store_true', help='Save trajectory statistics')
+    parser.add_argument('--save_time', action='store_true', help='Save time horizon')
 
     args = parser.parse_args()
 

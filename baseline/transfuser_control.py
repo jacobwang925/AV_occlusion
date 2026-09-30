@@ -5,29 +5,20 @@ import queue
 import matplotlib.pyplot as plt
 import argparse
 import csv
-import copy
 import math
 from PIL import Image
 from collections import deque
 from queue import Queue
 from queue import Empty
-from threading import Thread
 from copy import deepcopy
 import torch
 import itertools
 
-# export PYTHONPATH=$PYTHONPATH:/home/tongyaoj/Documents/carla9.10/PythonAPI/carla/dist/carla-0.9.10-py3.7-linux-x86_64.egg
-
-
 sys.path.append(os.path.abspath('../carla/agents/navigation'))
-import controller
 
 # add path for gps target goal
 sys.path.append(os.path.abspath('/home/tongyaoj/Documents/carla/PythonAPI/transfuser/leaderboard'))
 sys.path.append(os.path.abspath('/home/tongyaoj/Documents/carla9.10/PythonAPI/carla'))
-# from agents.navigation.global_route_planner import GlobalRoutePlanner
-# from agents.navigation.global_route_planner_dao import GlobalRoutePlannerDAO
-# from agents.navigation.local_planner import RoadOption
 from leaderboard.utils.route_manipulation import interpolate_trajectory
 from agents.navigation.local_planner import RoadOption
   
@@ -73,7 +64,6 @@ def process_img(image, world):
     return i3/255.0
 
 def spawn_walker(world, ego_vehicle, init_pos, walker_id):
-    # print(walker_id)
     walker_bp = random.choice(world.get_blueprint_library().filter('walker.pedestrian.*'))
     # create spawn point at intersection walking left to right
     spawn_point = carla.Transform()
@@ -172,7 +162,6 @@ def add_sensor(sensor_type, world, location, rotation, sensor_id, ego_vehicle, s
         else:
             blueprint.set_attribute('fov', '120')
     # Set the time in seconds between sensor captures
-    # carla_frame_rate = 1.0 / 20.0
     if sensor_type == 'sensor.other.gnss':
         blueprint.set_attribute('sensor_tick', '0.01')
         blueprint.set_attribute('noise_alt_stddev', str(0.000005))
@@ -181,7 +170,6 @@ def add_sensor(sensor_type, world, location, rotation, sensor_id, ego_vehicle, s
     else:
         blueprint.set_attribute('sensor_tick', '0.05')
 
-    # if sensor_type.startswith('sensor.lidar'):
     if sensor_type == 'sensor.lidar.ray_cast':
         blueprint.set_attribute('range', str(85.0))
         blueprint.set_attribute('rotation_frequency', str(20))
@@ -220,21 +208,17 @@ input_data = {}
 # Listen from sensors
 # Parsing CARLA physical Sensors
 def _parse_image_cb(image, sensor_id):
-    # global camera_image
     image_data = np.frombuffer(image.raw_data, dtype=np.uint8)
     image_data = image_data.reshape((image.height, image.width, 4))  # RGBA format
-    # camera_image[sensor_id] = image_data[:, :, :3]  # Keep only RGB
     input_data[sensor_id] = (0,image_data)
 
 def _parse_gnss_cb(gnss_data, sensor_id):
-    # global gps_output
     array = np.array([gnss_data.latitude,
                     gnss_data.longitude,
                     gnss_data.altitude], dtype=np.float64)
     input_data[sensor_id] = (0,array)
 
 def _parse_imu_cb(imu_data, sensor_id):
-    # global imu_output
     array = np.array([imu_data.accelerometer.x,
                           imu_data.accelerometer.y,
                           imu_data.accelerometer.z,
@@ -246,20 +230,8 @@ def _parse_imu_cb(imu_data, sensor_id):
     input_data[sensor_id] = (0,array)
 
 def _parse_lidar_cb(lidar_data, sensor_id):
-    # global lidar_output
     points = np.frombuffer(lidar_data.raw_data, dtype=np.dtype('f4'))
     points = np.reshape(points, (int(points.shape[0] / 4), 4))
-    # # x->-y, y->z, z->x
-    # x = points[:,0]
-    # y = points[:,1]
-    # z = points[:,2]
-    # intensity = points[0:,3]
-
-    # new_x = z
-    # new_y = x
-    # new_z = y
-
-    # transformed_points = np.column_stack((new_x, new_y, new_z, intensity))
     input_data[sensor_id] = (0,points)
 
 def safe_controller(ego_vehicle, 
@@ -274,8 +246,6 @@ def safe_controller(ego_vehicle,
                     save_time, 
                     sensors, 
                     model):
-    target_speed = 5 #m/s
-
     # normal distribution
     spawn_ticks = np.zeros(num_walker)
     for i in range(num_walker):
@@ -301,8 +271,7 @@ def safe_controller(ego_vehicle,
     for walker_id in range(num_walker):
         spawn_walker(world, ego_vehicle, init_pos, walker_id)
 
-    occlusion = spawn_occlusion(world, ego_vehicle, init_pos)
-    occlusion_dim = occlusion.bounding_box.extent
+    spawn_occlusion(world, ego_vehicle, init_pos)
 
     # set initial speed
     ego_vehicle.set_target_velocity(carla.Vector3D(x=init_speed, y=0.0, z=0.0))
@@ -439,33 +408,15 @@ class EgoModel():
 
 class initialize_model():
     def __init__(self, world):
-        import os
         import json
-        from copy import deepcopy
 
-        import cv2
-        import carla
-        from PIL import Image
-        from collections import deque
-
-        import torch
-        import numpy as np
-        import math
-        from shapely.geometry import Polygon
-        import itertools
-        import pathlib
-        
         sys.path.append(os.path.abspath('./team_code_transfuser/'))
         from config import GlobalConfig
         from model import LidarCenterNet
-        from data import lidar_to_histogram_features, draw_target_point, lidar_bev_cam_correspondences
-        args_file = open(os.path.join(path_to_conf_file, 'args.txt'), 'r')
-        self.args = json.load(args_file)
-        args_file.close()
-        # from leaderboard.autoagents import autonomous_agent
+        with open(os.path.join(path_to_conf_file, 'args.txt'), 'r') as args_file:
+            self.args = json.load(args_file)
         self.config = GlobalConfig(setting='eval')
 
-        # global plan
         start_point = carla.Location(x=140.5166015625 + init_pos, y=4.808422565460205, z=0.27)
         end_point = carla.Location(x=140.5166015625+200, y=4.808422565460205, z=0.27)
         config_trajectory = [start_point, end_point]
@@ -601,7 +552,6 @@ class initialize_model():
             ])
 
         local_command_point = np.array([next_wp[0]-denoised_pos[0]+3.1, next_wp[1]-denoised_pos[1]])
-        # local_command_point = np.array([next_wp[0]-denoised_pos[0], next_wp[1]-denoised_pos[1]])
         local_command_point = R.T.dot(local_command_point)
         
         # quick debug attempt
@@ -764,7 +714,6 @@ class initialize_model():
         Set the plan (route) for the agent
         """
         ds_ids = self.downsample_route(global_plan_world_coord, 50)
-        # breakpoint()
         self._global_plan_world_coord = [(global_plan_world_coord[x][0], global_plan_world_coord[x][1]) for x in ds_ids]
         self._global_plan = [global_plan_gps[x] for x in ds_ids]
         return self._global_plan_world_coord, self._global_plan
@@ -849,7 +798,6 @@ class initialize_model():
     def prepare_goal_location(self, tick_data):
         tick_data['target_point'] = [torch.FloatTensor([tick_data['target_point'][0]]),
                                             torch.FloatTensor([tick_data['target_point'][1]])]
-        # breakpoint()
         target_point = torch.stack(tick_data['target_point'], dim=1).to('cuda', dtype=torch.float32)
 
         target_point_image_degrees = []
@@ -922,11 +870,6 @@ class initialize_model():
         image = np.asarray(image)
         cropped_image = image[start_y:start_y+crop_y, start_x:start_x+crop_x]
         return cropped_image
-    
-    # def _get_position(self, tick_data):
-    #     gps = tick_data['gps']
-    #     gps = (gps - self._route_planner.mean) * self._route_planner.scale
-    #     return gps
     
     def _get_position(self, tick_data):
         gps = tick_data['gps']
@@ -1016,7 +959,6 @@ class SensorInterface(object):
             self._opendrive_tag = tag
 
     def update_sensor(self, tag, data, timestamp):
-        # print("Updating {} - {}".format(tag, timestamp))
         if tag not in self._sensors_objects:
             raise SensorConfigurationInvalid("The sensor with tag [{}] has not been created!".format(tag))
 
@@ -1030,11 +972,9 @@ class SensorInterface(object):
                 # Don't wait for the opendrive sensor
                 if self._opendrive_tag and self._opendrive_tag not in data_dict.keys() \
                         and len(self._sensors_objects.keys()) == len(data_dict.keys()) + 1:
-                    # print("Ignoring opendrive sensor")
                     break
 
                 sensor_data = self._new_data_buffers.get(True, self._queue_timeout)
-                # print("Getting {} - {}".format(sensor_data[0],sensor_data[1]))
                 data_dict[sensor_data[0]] = ((sensor_data[1], sensor_data[2]))
 
         except Empty:
@@ -1151,7 +1091,6 @@ def main(save, save_pos, save_prob, save_brake, save_trajectory, save_key, save_
         gps.listen(lambda gnss_data: _parse_gnss_cb(gnss_data, 'gps'))
 
         lidar_location = carla.Location(x=1.3, y=0.0, z=2.5)
-        # lidar_rotation = carla.Rotation(pitch=0.0, yaw=0.0, roll=-90.0) # by configuration
         lidar_rotation = carla.Rotation(pitch=0.0, yaw=-90.0, roll=0.0)
         lidar = add_sensor('sensor.lidar.ray_cast', world, lidar_location, lidar_rotation, 'lidar', ego_vehicle, sensors)
 
@@ -1236,21 +1175,22 @@ def main(save, save_pos, save_prob, save_brake, save_trajectory, save_key, save_
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--save', type=bool, default=False, help='Save frames')
+    parser.add_argument('--save', action='store_true', help='Save frames')
     parser.add_argument('--save_path', type=str, default='frames/', help='Path to save frames')
-    parser.add_argument('--save_pos', type=bool, default=False, help='Save velocity, brake, and position stats')
-    parser.add_argument('--save_brake', type=bool, default=False, help='Save brake stats')
-    parser.add_argument('--save_prob', type=bool, default=False, help='Save safety probability')
+    parser.add_argument('--save_pos', action='store_true', help='Save velocity, brake, and position statistics')
+    parser.add_argument('--save_brake', action='store_true', help='Save brake statistics')
+    parser.add_argument('--save_prob', action='store_true', help='Save safety probability')
     parser.add_argument('--init_pos', type=float, default=0, help='Initial position of vehicle')
     parser.add_argument('--init_speed', type=float, default=0, help='Initial speed of vehicle')
     parser.add_argument('--alpha', type=float, default=0.2, help='Safe controller parameter')
     parser.add_argument('--epsilon', type=float, default=0.05, help='Safety tolerance')
-    parser.add_argument('--emergency_activate', type=bool, default=True, help='Emergency stop controller is activated')
+    parser.add_argument('--emergency_activate', action='store_true', default=True, help=argparse.SUPPRESS)
+    parser.add_argument('--no-emergency', dest='emergency_activate', action='store_false', help='Disable the emergency-stop controller')
     parser.add_argument('--num_walker', type=int, default=8, help='Number of walker spawned')
     parser.add_argument('--save_file', type=str, default='safe_control.txt', help='File to save safe status')
-    parser.add_argument('--save_trajectory', type=bool, default=False, help='Save brake stats')
-    parser.add_argument('--save_key', type=bool, default=False, help='Save closet key stats')
-    parser.add_argument('--save_time', type=bool, default=False, help='Save time horizon')
+    parser.add_argument('--save_trajectory', action='store_true', help='Save trajectory statistics')
+    parser.add_argument('--save_key', action='store_true', help='Save closest-key statistics')
+    parser.add_argument('--save_time', action='store_true', help='Save time horizon')
 
     args = parser.parse_args()
     save = args.save

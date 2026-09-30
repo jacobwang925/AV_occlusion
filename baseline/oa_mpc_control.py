@@ -6,14 +6,6 @@ import matplotlib.pyplot as plt
 import argparse
 import csv
 
-# export PYTHONPATH=$PYTHONPATH:/home/plusai/Documents/carla9.10/PythonAPI/carla/dist/carla-0.9.10-py3.7-linux-x86_64.egg
-
-sys.path.append(os.path.abspath('../carla/agents/navigation'))
-import controller
-  
-# reset sys.path
-sys.path = sys.path[:-1]
-
 try:
     sys.path.append(glob.glob('../carla/dist/carla-*%d.%d-%s.egg' % (
         sys.version_info.major,
@@ -169,7 +161,7 @@ def future_distance_integration(t, v_max, v_ego):
 def oa_mpc_controller(v_ego, pos_ego, v_target, is_visible):
     distance_to_stop = POS_WALKER - SAFETY_MARGIN - pos_ego
 
-    # # nominal control
+    # Nominal control
     # passed safe zone
     if distance_to_stop < 1:
         logging.info('nominal control to pass intersection')
@@ -190,7 +182,7 @@ def oa_mpc_controller(v_ego, pos_ego, v_target, is_visible):
         logging.info(f'nominal control can pass with {future_distance_to_stop}')
         return MAX_ACC if v_ego < v_target else 0
 
-    # # oa_mpc control
+    # OA-MPC control
     if v_ego >= SAFE_V_THRESHOLD:
         mpc_acc = - v_ego ** 2 / (2 * distance_to_stop)
         logging.info(f'mpc control with min decceleration {max(-MAX_ACC, mpc_acc)}')
@@ -328,7 +320,6 @@ def process(ego_vehicle, world, image_queue, spawn_points, init_pos, init_speed,
                 # set ego vehicle to stop
                 control = carla.VehicleControl(throttle=0.0, brake=1.0)
                 ego_vehicle.apply_control(control)
-                # display_stats()
                 return
 
         # check if vehicle is at the end of the road
@@ -341,7 +332,6 @@ def process(ego_vehicle, world, image_queue, spawn_points, init_pos, init_speed,
                     f.write(str(tick_count) + '\n')
             with open('mpc_control.txt', 'a') as f:
                 f.write('safe\n')
-            # display_stats()
             return            
 
 def main(save, save_pos, save_brake, save_trajectory, save_time, init_pos, init_speed, num_walker):
@@ -441,7 +431,6 @@ def main(save, save_pos, save_brake, save_trajectory, save_time, init_pos, init_
         if save_brake:
             # graph brake stats
             plt.plot(velocity_stats)
-            # plt.plot(u_stats)
             plt.ylabel('velocity & control')
             plt.xlabel('time')
             plt.savefig('brake_stats_' + str(int(time.time())) + '.png')
@@ -463,16 +452,16 @@ def main(save, save_pos, save_brake, save_trajectory, save_time, init_pos, init_
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--save', type=bool, default=False, help='Save frames')
+    parser.add_argument('--save', action='store_true', help='Save frames')
     parser.add_argument('--save_path', type=str, default='frames/', help='Path to save frames')
-    parser.add_argument('--save_pos', type=bool, default=False, help='Save velocity, brake, and position stats')
-    parser.add_argument('--save_brake', type=bool, default=False, help='Save brake stats')
+    parser.add_argument('--save_pos', action='store_true', help='Save velocity, brake, and position statistics')
+    parser.add_argument('--save_brake', action='store_true', help='Save brake statistics')
     parser.add_argument('--init_pos', type=float, default=0, help='Initial position of vehicle')
     parser.add_argument('--init_speed', type=float, default=0, help='Initial speed of vehicle')
     parser.add_argument('--num_walker', type=int, default=8, help='Number of walker spawned')
     parser.add_argument('--save_file', type=str, default='mpc_control.txt', help='File to save safe status')
-    parser.add_argument('--save_trajectory', type=bool, default=False, help='Save brake stats')
-    parser.add_argument('--save_time', type=bool, default=False, help='Save time horizon')
+    parser.add_argument('--save_trajectory', action='store_true', help='Save trajectory statistics')
+    parser.add_argument('--save_time', action='store_true', help='Save time horizon')
 
     args = parser.parse_args()
 
